@@ -1,0 +1,434 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="shift_report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="47314d6b-ef42-4d1b-88d3-8c7eca1105a5">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="hotelId" class="java.lang.Long"/>
+	<parameter name="fromDate" class="java.sql.Date"/>
+	<parameter name="toDate" class="java.sql.Date"/>
+	<parameter name="hotelName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelAddress" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelPhone" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelFax" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelEmail" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Admin"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedOn" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[SELECT
+    usl.id                                  AS shift_id,
+    usl.login_time                          AS shift_time,
+
+    pd.payment_date                         AS payment_date,
+    gd.guest_details_status                 AS guest_status,
+    gd.check_in_date::date                  AS date_in,
+    gd.check_out_date::date                 AS date_out,
+    rm.room_name                            AS room,
+    CONCAT(per.first_name, ' ', per.last_name) AS guest_name,
+
+    -- Payment category breakdown
+        CASE WHEN UPPER(pt.payment_type_name) = 'CASH' THEN pd.amount ELSE 0 END AS cash_amt,
+
+    CASE WHEN UPPER(pt.payment_type_name) NOT IN ('CASH','CHECK','CHEQUE')
+         THEN pd.amount ELSE 0 END AS other_amt,
+
+    rd.discount AS direct_discount,
+
+    0.0 AS deposit_amt,
+    0.0 AS billing_amt,
+    0.0 AS auth_to_sale,
+
+    CASE WHEN UPPER(pt.payment_type_name) IN ('CHECK','CHEQUE') THEN pd.amount ELSE 0 END AS bank_amt,
+
+    CASE WHEN UPPER(pt.payment_type_name) LIKE '%VISA%'
+              OR UPPER(pt.payment_type_name) LIKE '%MASTER%'
+              OR UPPER(pt.payment_type_name) LIKE '%AMEX%'
+              OR UPPER(pt.payment_type_short_name) = 'CC'
+         THEN pd.amount ELSE 0 END AS ccsale_amt,
+
+    0.0 AS ccauth_amt,
+
+    pd.amount                                                                       AS amount,
+    pt.payment_type_name                                                            AS payment_type,
+    pd.payment_details_type                                                         AS payment_details_type,
+	pd.id
+
+FROM multi_motels_pms_db.user_session_log usl
+
+LEFT JOIN multi_motels_pms_db.payment_details pd
+    ON pd.hotel_id = usl.hotel_id
+   AND pd.payment_date >= usl.login_time
+   AND (usl.logout_time IS NULL OR pd.payment_date <= usl.logout_time)
+   AND (pd.is_deleted = false OR pd.is_deleted IS NULL)
+   AND (pd.is_active = true OR pd.is_active IS NULL)
+
+LEFT JOIN multi_motels_pms_db.payment_type pt
+    ON pd.payment_type_id = pt.id
+
+LEFT JOIN multi_motels_pms_db.guest_details gd
+    ON pd.guest_details_id = gd.guest_details_id
+
+LEFT JOIN multi_motels_pms_db.room_master rm
+    ON gd.room_master_id = rm.id
+
+LEFT JOIN multi_motels_pms_db.personal_details per
+    ON gd.personal_details_id = per.id
+
+LEFT JOIN multi_motels_pms_db.rent_details rd
+    ON rd.personal_details_id = gd.personal_details_id
+
+WHERE usl.hotel_id =  $P{hotelId}
+  AND usl.business_date BETWEEN $P{fromDate} AND  $P{toDate}
+  AND (usl.is_deleted = false OR usl.is_deleted IS NULL)
+
+ORDER BY usl.login_time, pd.payment_date]]></query>
+	<field name="shift_id" class="java.lang.Long"/>
+	<field name="shift_time" class="java.sql.Timestamp"/>
+	<field name="payment_date" class="java.sql.Timestamp"/>
+	<field name="guest_status" class="java.lang.String"/>
+	<field name="date_in" class="java.sql.Date"/>
+	<field name="date_out" class="java.sql.Date"/>
+	<field name="room" class="java.lang.String"/>
+	<field name="guest_name" class="java.lang.String"/>
+	<field name="cash_amt" class="java.lang.Double"/>
+	<field name="other_amt" class="java.lang.Double"/>
+	<field name="direct_discount" class="java.lang.Double"/>
+	<field name="deposit_amt" class="java.lang.Double"/>
+	<field name="billing_amt" class="java.lang.Double"/>
+	<field name="auth_to_sale" class="java.lang.Double"/>
+	<field name="bank_amt" class="java.lang.Double"/>
+	<field name="ccsale_amt" class="java.lang.Double"/>
+	<field name="ccauth_amt" class="java.lang.Double"/>
+	<field name="amount" class="java.lang.Double"/>
+	<field name="payment_type" class="java.lang.String"/>
+	<field name="payment_details_type" class="java.lang.String"/>
+	<variable name="G_CASH" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_OTHER" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_DISCOUNT" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{direct_discount}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_DEPOSIT" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{deposit_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_BILLING" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{billing_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_AUTHSALE" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{auth_to_sale}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_BANK" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{bank_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_CCSALE" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{ccsale_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_CCAUTH" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{ccauth_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_COMPLEMENTARY" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA["COMPLEMENTARY".equals($F{payment_details_type}) ? $F{amount} : 0.0]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_BADDEBTS" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA["BAD_DEBTS".equals($F{payment_details_type}) ? $F{amount} : 0.0]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="G_OTHERS" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA["OTHERS".equals($F{payment_details_type}) ? $F{amount} : 0.0]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_CASH" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_OTHER" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_DISCOUNT" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{direct_discount}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_DEPOSIT" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{deposit_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_BILLING" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{billing_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_AUTHSALE" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{auth_to_sale}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_BANK" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{bank_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_CCSALE" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{ccsale_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="S_CCAUTH" resetType="Group" calculation="Sum" resetGroup="shift_group" class="java.lang.Double">
+		<expression><![CDATA[$F{ccauth_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<group name="shift_group">
+		<expression><![CDATA[$F{shift_id}]]></expression>
+		<groupHeader>
+			<band height="18" splitType="Stretch">
+				<element kind="textField" uuid="fa4ed58d-5bfb-49f4-853f-d7e962b2f619" x="0" y="2" width="400" height="14" fontName="DejaVu Sans" fontSize="9.0" bold="true">
+					<expression><![CDATA["Shift Time " + new java.text.SimpleDateFormat("M/d/yyyy h:mm a").format($F{shift_time})]]></expression>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="16" splitType="Stretch">
+				<element kind="rectangle" uuid="2a35bfa3-9143-4a06-8113-45cc8ffa556e" mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#E8E8E8" backcolor="#E8E8E8"/>
+				<element kind="staticText" uuid="7ab54da1-773b-4f4f-88d5-8c9cb61956dc" x="263" y="1" width="40" height="13" fontName="DejaVu Sans" fontSize="8.0" bold="true">
+					<text><![CDATA[Total]]></text>
+				</element>
+				<element kind="textField" uuid="6a9935e1-b8d6-4588-807d-5ec11f0c4478" x="303" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_CASH}]]></expression>
+				</element>
+				<element kind="textField" uuid="07f0f66c-9488-4a64-a246-3d2d77ee17e5" x="353" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_OTHER}]]></expression>
+				</element>
+				<element kind="textField" uuid="165bed9b-5496-4dde-8ed0-8f9e96567699" x="403" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_DISCOUNT}]]></expression>
+				</element>
+				<element kind="textField" uuid="258eace1-9484-4c0a-9333-49b5c485b15a" x="453" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_DEPOSIT}]]></expression>
+				</element>
+				<element kind="textField" uuid="f8fc62f6-9f27-43a2-bef1-2f75f9a67e8a" x="503" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_BILLING}]]></expression>
+				</element>
+				<element kind="textField" uuid="1714f495-a6bc-4061-933a-8dd91c130a6f" x="553" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_AUTHSALE}]]></expression>
+				</element>
+				<element kind="textField" uuid="2f67b15b-39a6-4ee9-b112-e7f1ccd1e4b3" x="603" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_BANK}]]></expression>
+				</element>
+				<element kind="textField" uuid="f5a10223-1405-4864-8da6-ba2d62eecc9f" x="653" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_CCSALE}]]></expression>
+				</element>
+				<element kind="textField" uuid="dfb5289e-4e4e-430b-80bc-433b0d976635" x="703" y="1" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{S_CCAUTH}]]></expression>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="78" splitType="Stretch">
+		<element kind="textField" uuid="e2f2e3c7-8efe-4817-9860-f07d62638c55" x="0" y="0" width="802" height="14" fontName="DejaVu Sans" fontSize="11.0" bold="true">
+			<expression><![CDATA[$P{hotelName}]]></expression>
+		</element>
+		<element kind="textField" uuid="4bf41026-0bb6-433c-8623-6476f2efd2a9" x="0" y="14" width="802" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA[$P{hotelAddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="4e6c4085-0a81-4e54-9eb5-6c0c329f9dc9" x="0" y="25" width="802" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["Phone: " + $P{hotelPhone} + "; Fax: " + $P{hotelFax}]]></expression>
+		</element>
+		<element kind="textField" uuid="27c168b4-9bd6-4277-aed3-c802012ec21f" x="0" y="36" width="802" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["E-mail: " + $P{hotelEmail}]]></expression>
+		</element>
+		<element kind="line" uuid="772e6bc9-7a58-4499-9ad7-4ba2cba012ac" x="0" y="50" width="802" height="1" forecolor="#AAAAAA"/>
+		<element kind="textField" uuid="895ee5b9-7b1e-4159-ab11-970c33dc08a6" x="0" y="53" width="500" height="14" fontName="DejaVu Sans" fontSize="10.0" bold="true">
+			<expression><![CDATA["Shift Report From " + $P{fromDate} + " To " + $P{toDate}]]></expression>
+		</element>
+		<element kind="line" uuid="f9157798-76c3-4a8f-95d4-9d9c63205275" x="0" y="68" width="802" height="1" forecolor="#AAAAAA"/>
+	</title>
+	<columnHeader height="28" splitType="Stretch">
+		<element kind="rectangle" uuid="81f9cb20-f104-4599-8584-ad29d78fb6a9" mode="Opaque" x="0" y="0" width="802" height="27" forecolor="#DDDDDD" backcolor="#DDDDDD"/>
+		<element kind="staticText" uuid="e0305b7d-911a-4eb5-b583-4059ad208b5e" x="0" y="2" width="55" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Status]]></text>
+		</element>
+		<element kind="staticText" uuid="d70626a0-e1f0-4af5-954c-4316fb1e765f" x="55" y="2" width="40" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Date In]]></text>
+		</element>
+		<element kind="staticText" uuid="6d66b4a1-3d4a-4b13-9a05-726cff974778" x="95" y="2" width="40" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Date Out]]></text>
+		</element>
+		<element kind="staticText" uuid="6c9b0137-33cd-4b31-bc46-5976debe851e" x="135" y="2" width="40" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Payment Date]]></text>
+		</element>
+		<element kind="staticText" uuid="8be3eb9d-c867-4dd5-81e0-6b57b03c99e8" x="175" y="2" width="40" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Room]]></text>
+		</element>
+		<element kind="staticText" uuid="0f2f392a-b62d-444a-ac1f-6f2a88758727" x="215" y="2" width="88" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true">
+			<text><![CDATA[Guest Name]]></text>
+		</element>
+		<element kind="staticText" uuid="3379ca5a-3bbd-4297-bb6f-eec698076aba" x="303" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Cash]]></text>
+		</element>
+		<element kind="staticText" uuid="4d246622-0012-4520-864f-3450b9ccf942" x="353" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Other Payments]]></text>
+		</element>
+		<element kind="staticText" uuid="2d7657ec-07cd-47dc-b95b-1937b091de91" x="403" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Direct Discount]]></text>
+		</element>
+		<element kind="staticText" uuid="44d97881-9782-400e-a31e-e034af99e57d" x="453" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Deposit]]></text>
+		</element>
+		<element kind="staticText" uuid="7b0e9625-002e-4fe0-be17-352c6aeeaaba" x="503" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Billing]]></text>
+		</element>
+		<element kind="staticText" uuid="922a15fb-cdc3-439c-8a71-c5bb4f010279" x="553" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[AuthToSale]]></text>
+		</element>
+		<element kind="staticText" uuid="0d9ef54d-72ec-486a-b4ab-c9ae67343cf0" x="603" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Bank]]></text>
+		</element>
+		<element kind="staticText" uuid="02cf3be5-6801-47fe-ac5b-37c458b468c2" x="653" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[CCSale]]></text>
+		</element>
+		<element kind="staticText" uuid="e5fa4d7b-d526-41ce-82a0-dc2690ae1716" x="703" y="2" width="50" height="12" fontName="DejaVu Sans" fontSize="7.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[CCAuth]]></text>
+		</element>
+		<element kind="line" uuid="6e7a9692-2e45-4328-91bb-5c674c9bdb73" x="0" y="27" width="802" height="1" forecolor="#000000"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<element kind="textField" uuid="b7dbc416-48b9-4ded-9e5a-85f259e27969" x="0" y="0" width="55" height="13" fontName="DejaVu Sans" fontSize="7.0" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[
+                    "CheckIn".equals($F{guest_status})    ? "C/I" :
+                    "Check-In".equals($F{guest_status})   ? "C/I" :
+                    "Check-Out".equals($F{guest_status})  ? "P-C/I" :
+                    "Reservation".equals($F{guest_status})? "R/B" :
+                    "Occupied".equals($F{guest_status})   ? "G/P" :
+                    "Cancelled".equals($F{guest_status})  ? "Cancelled" :
+                    ($F{guest_status} != null ? $F{guest_status} : "")
+                ]]></expression>
+			</element>
+			<element kind="textField" uuid="f109b06b-0eb1-461a-9927-92a973434473" x="55" y="0" width="40" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="MM/dd" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{date_in}]]></expression>
+			</element>
+			<element kind="textField" uuid="8708765d-0181-496f-b782-e7ee1e2684d0" x="95" y="0" width="40" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="MM/dd" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{date_out}]]></expression>
+			</element>
+			<element kind="textField" uuid="c7aef1c1-843d-418c-bc65-a062e31822d9" x="135" y="0" width="40" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="M/d/yy h:mm a" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{payment_date}]]></expression>
+			</element>
+			<element kind="textField" uuid="3e4dd1af-eb03-4a19-9df7-ff3f5430ccd9" x="175" y="0" width="40" height="13" fontName="DejaVu Sans" fontSize="9.0" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{room}]]></expression>
+			</element>
+			<element kind="textField" uuid="c2b03dd9-2825-4c77-ace5-46f60ef433ab" x="215" y="0" width="88" height="13" fontName="DejaVu Sans" fontSize="9.0" blankWhenNull="true">
+				<expression><![CDATA[$F{guest_name}]]></expression>
+			</element>
+			<element kind="textField" uuid="8c22d16e-57cd-4c34-a266-fcbe1ad897d9" x="303" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{cash_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="d89217f5-b6fa-4c38-becb-71a351754c69" x="353" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{other_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="7604202b-483e-40b2-aa51-8f6be6a191a6" x="403" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{direct_discount}]]></expression>
+			</element>
+			<element kind="textField" uuid="f7690748-06c5-4d74-88e2-6bca1a8c2b3a" x="453" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{deposit_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="89c8f444-7ea9-4f2e-9edf-fce8982f6fbc" x="503" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{billing_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="50262567-ef7a-4b9d-a8a4-0f39e2761dbf" x="553" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{auth_to_sale}]]></expression>
+			</element>
+			<element kind="textField" uuid="7581f788-5f0d-4194-95c2-0fa03744ec02" x="603" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{bank_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="bce7a640-ae55-4060-b72e-ce87f87c71d7" x="653" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{ccsale_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="0e8a5665-5601-4c63-bd8d-c19bd821f671" x="703" y="0" width="50" height="13" fontName="DejaVu Sans" fontSize="9.0" pattern="#,##0.00" blankWhenNull="true" hTextAlign="Right">
+				<expression><![CDATA[$F{ccauth_amt}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<summary height="120" splitType="Stretch">
+		<element kind="line" uuid="79babaa9-e031-4904-8068-4cfb92f6e215" x="0" y="0" width="802" height="1" forecolor="#000000"/>
+		<element kind="staticText" uuid="4a6f0603-744a-4a40-8487-8e72349ac757" x="0" y="4" width="100" height="13" fontName="DejaVu Sans" fontSize="9.0" bold="true">
+			<text><![CDATA[Grand Total]]></text>
+		</element>
+		<element kind="textField" uuid="d5131de9-d906-4856-a763-b2ccdfccbd5f" x="303" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_CASH}]]></expression>
+		</element>
+		<element kind="textField" uuid="d262945c-0655-47c8-867e-35a9a901f6af" x="353" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_OTHER}]]></expression>
+		</element>
+		<element kind="textField" uuid="ac0f972d-f52c-4d05-96bd-4e8694de5728" x="403" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_DISCOUNT}]]></expression>
+		</element>
+		<element kind="textField" uuid="6684358f-fc0e-453b-8842-37fba6f082b8" x="453" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_DEPOSIT}]]></expression>
+		</element>
+		<element kind="textField" uuid="605ddfef-ebbd-4b92-af28-2c313a164d2d" x="503" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_BILLING}]]></expression>
+		</element>
+		<element kind="textField" uuid="d1ebbe62-b821-42d9-a0b0-b542cc83d98c" x="553" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_AUTHSALE}]]></expression>
+		</element>
+		<element kind="textField" uuid="dd40a0f1-7115-4846-a17e-f03d45c4642d" x="603" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_BANK}]]></expression>
+		</element>
+		<element kind="textField" uuid="ddd0972b-ddb6-4c52-b6cf-39ab79e8e976" x="653" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_CCSALE}]]></expression>
+		</element>
+		<element kind="textField" uuid="5606a857-be97-49b1-a9c9-22a4dfb564ef" x="703" y="4" width="50" height="13" fontName="DejaVu Sans" fontSize="8.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{G_CCAUTH}]]></expression>
+		</element>
+		<element kind="staticText" uuid="a3642c5f-9522-4775-b5eb-e20b6b222fa2" x="0" y="25" width="120" height="13" fontName="DejaVu Sans" fontSize="8.0" bold="true">
+			<text><![CDATA[Other Payments]]></text>
+		</element>
+		<element kind="staticText" uuid="f9d19a6f-30c4-4113-a443-8c68869273da" x="0" y="40" width="100" height="11" fontName="DejaVu Sans" fontSize="7.0">
+			<text><![CDATA[Complementary]]></text>
+		</element>
+		<element kind="textField" uuid="da50d7d5-dc7a-48c9-a0b7-961e3031a346" x="100" y="40" width="60" height="11" fontName="DejaVu Sans" fontSize="7.0" evaluationTime="Report" pattern="#,##0.00" hTextAlign="Right">
+			<expression><![CDATA[$V{G_COMPLEMENTARY}]]></expression>
+		</element>
+		<element kind="staticText" uuid="761fb4c2-ca37-4e19-ad8b-2e2dfd24021a" x="0" y="53" width="100" height="11" fontName="DejaVu Sans" fontSize="7.0">
+			<text><![CDATA[BadDebts]]></text>
+		</element>
+		<element kind="textField" uuid="abb0fc80-c0df-4cc7-b1c1-84b42c2371aa" x="100" y="53" width="60" height="11" fontName="DejaVu Sans" fontSize="7.0" evaluationTime="Report" pattern="#,##0.00" hTextAlign="Right">
+			<expression><![CDATA[$V{G_BADDEBTS}]]></expression>
+		</element>
+		<element kind="staticText" uuid="1c3924fe-5cd9-4b18-a074-273ad127d806" x="0" y="66" width="100" height="11" fontName="DejaVu Sans" fontSize="7.0">
+			<text><![CDATA[Others]]></text>
+		</element>
+		<element kind="textField" uuid="5ed40885-2a20-4e5d-b746-b10c73d1cb72" x="100" y="66" width="60" height="11" fontName="DejaVu Sans" fontSize="7.0" evaluationTime="Report" pattern="#,##0.00" hTextAlign="Right">
+			<expression><![CDATA[$V{G_OTHERS}]]></expression>
+		</element>
+		<element kind="textField" uuid="8eba4e81-438d-4a85-9f1d-687182ecbf58" x="0" y="85" width="250" height="12" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["Printed By: " + $P{printedBy}]]></expression>
+		</element>
+		<element kind="textField" uuid="13a7e59c-b2d7-4663-892b-1af96de28b26" x="0" y="99" width="250" height="12" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["Printed Date: " + $P{printedOn}]]></expression>
+		</element>
+		<element kind="textField" uuid="82cda0e2-df4c-418e-abf5-1fd9b6e0232e" x="652" y="99" width="150" height="14" fontName="DejaVu Sans" fontSize="7.0" evaluationTime="Report" hTextAlign="Right">
+			<expression><![CDATA["Developed by Imperion Infotech | Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</summary>
+</jasperReport>

@@ -1,0 +1,22 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Ignored default folder with query files
+/queries/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+.classpath
+.idea/
+.metadata/.log
+.metadata/.plugins/org.eclipse.core.runtime/
+.metadata/.plugins/org.eclipse.egit.core/
+.metadata/.plugins/org.eclipse.m2e.logback/0.log
+.project
+app.log
+hs_err_pid17572.log
+pms_logs.log
+target/
+uploads/

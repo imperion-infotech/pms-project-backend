@@ -1,0 +1,201 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="monthly_collection_payment_type_report" language="java" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="66b73353-6320-44cf-a67e-514ee8cec9cd">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<parameter name="hotelId" class="java.lang.Long"/>
+	<parameter name="fromDate" class="java.sql.Date"/>
+	<parameter name="toDate" class="java.sql.Date"/>
+	<parameter name="hotelName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelAddress" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelPhone" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelFax" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelEmail" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="reportMonthLabel" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Admin"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedOn" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[
+SELECT
+    series.pay_day                                                          AS pay_day,
+    COALESCE(SUM(CASE WHEN pt.payment_type_name = 'Cash'  THEN pd.amount END), 0) AS cash_amt,
+    COALESCE(SUM(CASE WHEN pt.payment_type_name = 'Check'
+                         OR pt.payment_type_name = 'Cheque' THEN pd.amount END), 0) AS check_amt,
+    COALESCE(SUM(CASE WHEN UPPER(pt.payment_type_name) LIKE '%VISA%' THEN pd.amount END), 0) AS visa_amt,
+    COALESCE(SUM(CASE WHEN UPPER(pt.payment_type_name) LIKE '%MASTER%'
+                         OR UPPER(pt.payment_type_name) LIKE '%MC%'   THEN pd.amount END), 0) AS mc_amt,
+    COALESCE(SUM(CASE WHEN pt.payment_type_name IS NULL
+                          OR pt.payment_type_name NOT IN ('Cash','Check','Cheque')
+                         AND UPPER(pt.payment_type_name) NOT LIKE '%VISA%'
+                         AND UPPER(pt.payment_type_name) NOT LIKE '%MASTER%'
+                         AND UPPER(pt.payment_type_name) NOT LIKE '%MC%'
+                     THEN pd.amount END), 0)                                 AS other_amt,
+    COALESCE(SUM(pd.amount), 0)                                              AS total_payment
+FROM (
+    SELECT generate_series(
+        CAST($P{fromDate} AS date),
+        CAST($P{toDate}   AS date),
+        INTERVAL '1 day'
+    )::date AS pay_day
+) series
+LEFT JOIN multi_motels_pms_db.payment_details pd
+    ON pd.payment_date::date = series.pay_day
+   AND pd.hotel_id = $P{hotelId}
+   AND (pd.is_deleted = false OR pd.is_deleted IS NULL)
+   AND (pd.is_active  = true  OR pd.is_active  IS NULL)
+LEFT JOIN multi_motels_pms_db.payment_type pt
+    ON pd.payment_type_id = pt.id
+GROUP BY series.pay_day
+ORDER BY series.pay_day
+    ]]></query>
+	<field name="pay_day" class="java.sql.Date"/>
+	<field name="cash_amt" class="java.lang.Double"/>
+	<field name="check_amt" class="java.lang.Double"/>
+	<field name="visa_amt" class="java.lang.Double"/>
+	<field name="mc_amt" class="java.lang.Double"/>
+	<field name="other_amt" class="java.lang.Double"/>
+	<field name="total_payment" class="java.lang.Double"/>
+	<variable name="T_CASH" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="T_CHECK" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{check_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="T_VISA" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{visa_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="T_MC" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{mc_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="T_OTHER" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<variable name="T_TOTAL" calculation="Sum" class="java.lang.Double">
+		<expression><![CDATA[$F{total_payment}]]></expression>
+		<initialValueExpression><![CDATA[0.0]]></initialValueExpression>
+	</variable>
+	<background splitType="Stretch"/>
+	<title height="80" splitType="Stretch">
+		<element kind="textField" uuid="ebd818d4-056a-4fe2-8a08-1dc84a389dd2" x="0" y="0" width="535" height="14" fontName="DejaVu Sans" fontSize="11.0" bold="true">
+			<expression><![CDATA[$P{hotelName}]]></expression>
+		</element>
+		<element kind="textField" uuid="6148d704-5bef-45ee-ae49-392d109ed6a6" x="0" y="14" width="535" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA[$P{hotelAddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="f24dbdbe-44b4-40bd-a062-a7b227694dbb" x="0" y="25" width="535" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["Phone: " + $P{hotelPhone} + ";  Fax: " + $P{hotelFax}]]></expression>
+		</element>
+		<element kind="textField" uuid="ee172d96-d08c-4465-be15-dea23fdc2763" x="0" y="36" width="535" height="11" fontName="DejaVu Sans" fontSize="8.0">
+			<expression><![CDATA["E-mail: " + $P{hotelEmail}]]></expression>
+		</element>
+		<element kind="line" uuid="b433880e-f5d9-4a87-8061-c64b6686bbe0" x="0" y="50" width="535" height="1" forecolor="#AAAAAA"/>
+		<element kind="textField" uuid="ace43d79-aa4e-4d1e-9e8f-75bc99098b40" x="0" y="53" width="535" height="14" fontName="DejaVu Sans" fontSize="10.0" bold="true">
+			<expression><![CDATA["Collection Report (Payment Type) for: " + $P{fromDate} +"  TO " + $P{toDate}]]></expression>
+		</element>
+		<element kind="line" uuid="0123618a-f89a-4be6-9a25-2419e57534d7" x="0" y="68" width="535" height="1" forecolor="#AAAAAA"/>
+	</title>
+	<columnHeader height="28" splitType="Stretch">
+		<element kind="rectangle" uuid="d463e5ec-701f-466f-9fca-3760673b3c3c" mode="Opaque" x="0" y="0" width="535" height="27" forecolor="#CCCCCC" backcolor="#CCCCCC"/>
+		<element kind="staticText" uuid="e4e8d598-d779-4647-8248-8c0d444d60d8" x="0" y="2" width="40" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Date]]></text>
+		</element>
+		<element kind="staticText" uuid="d9718538-bf35-45dc-bc9b-59aef33de198" x="40" y="2" width="80" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Cash]]></text>
+		</element>
+		<element kind="staticText" uuid="6988aa27-11bc-4bea-90c8-42e754f4e611" x="120" y="2" width="80" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Check]]></text>
+		</element>
+		<element kind="staticText" uuid="0a7d74a7-e46f-4d90-b9e5-7b9d85d88028" x="200" y="2" width="80" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Visa]]></text>
+		</element>
+		<element kind="staticText" uuid="4a522cc4-2cc9-43db-a017-25e6424061e2" x="280" y="2" width="80" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Master Card]]></text>
+		</element>
+		<element kind="staticText" uuid="b6c79a59-7b1a-4347-b10d-2e312aa3ddd6" x="360" y="2" width="80" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Other]]></text>
+		</element>
+		<element kind="staticText" uuid="d908e2a5-284a-4bfa-a389-d1845d275671" x="440" y="2" width="95" height="23" fontName="DejaVu Sans" fontSize="8.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Total Payment]]></text>
+		</element>
+		<element kind="line" uuid="f2e3bd0b-3067-4ddf-9ef3-325d25213ddd" x="0" y="27" width="535" height="1" forecolor="#000000"/>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<element kind="textField" uuid="2383d3d1-7352-4155-8ef8-8be84cd73888" x="0" y="1" width="40" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="d" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{pay_day}]]></expression>
+			</element>
+			<element kind="textField" uuid="add4b000-fda4-4b58-9a29-33817793d5e9" x="40" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{cash_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="67fde3f7-23ea-48e1-80c5-85da48a4161c" x="120" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{check_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="2cb7ea23-7212-4615-acf7-747cc6d82da3" x="200" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{visa_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="140e9130-1237-4096-90a0-b8250d41ec05" x="280" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{mc_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="fae7e165-d738-4c96-9308-08f17c56729d" x="360" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{other_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="4e67f397-6c41-477d-8155-a8d23f92d23c" x="440" y="1" width="95" height="14" fontName="DejaVu Sans" fontSize="8.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{total_payment}]]></expression>
+			</element>
+			<element kind="line" uuid="f0d08478-ebf2-4c3d-8927-560838351df6" x="0" y="15" width="535" height="1" forecolor="#DDDDDD"/>
+		</band>
+	</detail>
+	<columnFooter splitType="Stretch"/>
+	<summary height="68" splitType="Stretch">
+		<element kind="rectangle" uuid="065d4d78-dcba-4f60-a65c-352683497e7e" mode="Opaque" x="0" y="0" width="535" height="16" forecolor="#EEEEEE" backcolor="#EEEEEE"/>
+		<element kind="staticText" uuid="702ea602-d924-4681-9a7f-912c5d33c981" x="0" y="1" width="40" height="14" fontName="DejaVu Sans" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Total]]></text>
+		</element>
+		<element kind="textField" uuid="d63e155e-8ca6-4cfc-a41b-626db41b7254" x="40" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_CASH}]]></expression>
+		</element>
+		<element kind="textField" uuid="5842d52a-a91d-4980-89af-ef11d624f303" x="120" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_CHECK}]]></expression>
+		</element>
+		<element kind="textField" uuid="eed51f51-c38d-4ee3-8313-b53b891f12a2" x="200" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_VISA}]]></expression>
+		</element>
+		<element kind="textField" uuid="4aa5c5e1-5d31-4718-8700-76161b5749d2" x="280" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_MC}]]></expression>
+		</element>
+		<element kind="textField" uuid="d456ccf9-2279-4c95-a5cb-f806d30d7984" x="360" y="1" width="80" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_OTHER}]]></expression>
+		</element>
+		<element kind="textField" uuid="50b573b2-8dd9-4eaf-b07a-f137d5433efe" x="440" y="1" width="95" height="14" fontName="DejaVu Sans" fontSize="9.0" evaluationTime="Report" pattern="#,##0.00" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<expression><![CDATA[$V{T_TOTAL}]]></expression>
+		</element>
+		<element kind="line" uuid="df4a3f54-41bd-4525-9a1e-97c4bac228ba" x="0" y="16" width="535" height="1" forecolor="#000000"/>
+		<element kind="textField" uuid="98f12461-47e7-4c02-b835-32bbec07f3f5" x="0" y="24" width="300" height="12" fontName="DejaVu Sans" fontSize="8.0" bold="true">
+			<expression><![CDATA["Printed By: " + $P{printedBy}]]></expression>
+		</element>
+		<element kind="textField" uuid="90ee399c-e5c3-4057-848c-554ec319277f" x="0" y="40" width="300" height="12" fontName="DejaVu Sans" fontSize="8.0" bold="true">
+			<expression><![CDATA["Print Date: " + $P{printedOn}]]></expression>
+		</element>
+		<element kind="textField" uuid="170d05b6-5a0b-4834-ae83-e70aeeb57592" x="300" y="52" width="235" height="12" forecolor="#888888" fontName="DejaVu Sans" fontSize="7.0" evaluationTime="Report" hTextAlign="Right">
+			<expression><![CDATA["Developed by Imperion Infotech | Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</summary>
+</jasperReport>
