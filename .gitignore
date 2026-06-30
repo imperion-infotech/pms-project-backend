@@ -20,3 +20,9 @@ hs_err_pid17572.log
 pms_logs.log
 target/
 uploads/
+.metadata/ 
+.factorypath 
+.settings/ 
+target/ 
+*.log.gz 
+*.log 

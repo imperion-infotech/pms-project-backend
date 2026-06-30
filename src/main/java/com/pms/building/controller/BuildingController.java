@@ -42,7 +42,7 @@ public class BuildingController {
 //	@PreAuthorize("hasAnyRole('SUPER_ADMIN','HOTEL_OWNER','USER')")
 	@GetMapping("/user/getbuildings")
 	public ResponseEntity<List<Building>> getBuildings() {
-
+       logger.info("==== building lists =====")
 		List<Building> buildings = service.getBuildings();
 		return new ResponseEntity<List<Building>>(buildings, HttpStatus.OK);
 
