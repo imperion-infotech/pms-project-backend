@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pms.exception.ResourceNotFoundException;
 import com.pms.hotel.entity.Hotel;
 import com.pms.hotel.repository.HotelRepository;
 import com.pms.hotel.repository.UserHotelMappingRepository;
@@ -30,7 +31,6 @@ import com.pms.nightaudit.entity.BusinessDate;
 import com.pms.nightaudit.repository.BusinessDateRepository;
 import com.pms.security.dto.AuthResponse;
 import com.pms.security.dto.HotelDTO;
-import com.pms.security.dto.HotelSelectionRequest;
 import com.pms.security.dto.LoginRequest;
 import com.pms.security.dto.LoginResponse;
 import com.pms.security.dto.RefreshRequest;
@@ -39,6 +39,7 @@ import com.pms.security.entity.RefreshToken;
 import com.pms.security.entity.User;
 import com.pms.security.entity.UserHotelMapping;
 import com.pms.security.repository.UserRepository;
+import com.pms.security.service.AuthService;
 import com.pms.security.service.IUserService;
 import com.pms.security.service.PasswordService;
 import com.pms.security.service.RefreshTokenService;
@@ -48,8 +49,6 @@ import com.pms.usersession.entity.UserSessionLog;
 import com.pms.usersession.enums.SessionStatus;
 import com.pms.usersession.repository.UserSessionLogRepository;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -79,6 +78,9 @@ public class AuthController {
 
 	@Autowired
 	private BusinessDateRepository businessDateRepository;
+	
+	@Autowired
+	private AuthService authService;
 
 	public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, IUserService userService,
 			TokenBlacklistService blacklistService, UserRepository userRepository) {
@@ -152,16 +154,22 @@ public class AuthController {
 	
 	
 	
-	
+	/*
 	//===================
 	@PostMapping("/select-hotel")
 	@Transactional
 	public String selectHotel(@RequestParam Long hotelId,
 			@RequestParam String username, HttpSession session) {
-
-		User user = (User) session.getAttribute("user");
 		
-		logger.info("user details :"+user.getUsername());
+		logger.info("hotelId : {}", hotelId);
+		logger.info("username : {}", username);
+		logger.info("sessionId : {}", session.getId());
+
+//		User user = (User) session.getAttribute("user");
+		
+		User user= authService.getCurrentUser();
+		
+		logger.info("user details :"+user);
 
 		if (user == null) {
 			return ("User session expired");
@@ -203,10 +211,51 @@ public class AuthController {
 		log.setUpdatedBy(user.getId());
 
 		sessionLogRepository.save(log);
+		
+		logger.info("Generating token for hotelId={}", hotelId);
 
 //		return ResponseEntity.ok("Hotel selected successfully");
 		return jwtUtil.generateToken(user, hotelId);
 	}
+	*/
+	
+	
+	@PostMapping("/select-hotel")
+	@Transactional
+	public ResponseEntity<AuthResponse> selectHotel(@RequestParam Long hotelId) {
+	 
+	    User user = authService.getCurrentUser();
+	 
+	    Hotel hotel = hotelRepository.findByIdAndIsDeletedFalse(hotelId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Hotel not found"));
+	 
+	    BusinessDate businessDate = businessDateRepository
+	            .findByHotelIdAndCurrentBusinessDateTrue(hotel.getId())
+	            .orElseThrow(() -> new ResourceNotFoundException("Business Date not found"));
+	 
+	    UserSessionLog log = new UserSessionLog();
+	    log.setUser(user);
+	    log.setHotel(hotel);
+	    log.setHotelId(hotel.getId());
+	    log.setBusinessDate(businessDate.getBusinessDate());
+	    log.setLoginTime(LocalDateTime.now());
+	    log.setSessionStatus(SessionStatus.ACTIVE);
+	    log.setCreatedBy(user.getId());
+	    log.setUpdatedBy(user.getId());
+	 
+	    sessionLogRepository.save(log);
+	 
+//	    String token = jwtUtil.generateToken(user, hotel.getId());
+	    
+	    
+	    String accessToken = jwtUtil.generateToken(user, hotel.getId());
+	    return ResponseEntity.ok(
+	            new AuthResponse(accessToken, null)
+	    );
+	    
+	 
+	}
+	
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@RequestBody RegisterRequest request) {
