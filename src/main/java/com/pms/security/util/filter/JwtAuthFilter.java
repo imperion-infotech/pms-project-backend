@@ -104,7 +104,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
             
             logger.info("Token extracted");
-
+            System.out.println("Token received: [" + token + "]");
             
             logger.info("Username: {}", username);
             

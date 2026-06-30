@@ -160,6 +160,8 @@ public class AuthController {
 			@RequestParam String username, HttpSession session) {
 
 		User user = (User) session.getAttribute("user");
+		
+		logger.info("user details :"+user.getUsername());
 
 		if (user == null) {
 			return ("User session expired");
