@@ -93,11 +93,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String token = header.substring(7);
+            String username="";
+            String token = "";
+            
+            if (header != null && header.startsWith("Bearer ")) {
+                 token = header.substring(7);
+                if (!token.isBlank()) {
+                	 username = jwtUtil.extractUsername(token);
+                }
+            }
             
             logger.info("Token extracted");
 
-            String username = jwtUtil.extractUsername(token);
             
             logger.info("Username: {}", username);
             

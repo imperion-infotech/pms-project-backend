@@ -5,9 +5,13 @@ package com.pms.auditlog.aspect;
 
 
 import org.aspectj.lang.ProceedingJoinPoint;
+
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,32 +24,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApiLoggingAspect {
 
-    @Around("execution(* com.pms..controller..*(..))")
-    public Object logApi(ProceedingJoinPoint joinPoint) throws Throwable {
+	@Around("within(@org.springframework.web.bind.annotation.RestController *)")
+	public Object logApi(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        long start = System.currentTimeMillis();
+	    ServletRequestAttributes attr =
+	            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        log.info("========== API START ==========");
-        log.info("Controller : {}", joinPoint.getSignature().toShortString());
+	    if (attr != null) {
+	        log.info("URI    : {}", attr.getRequest().getRequestURI());
+	        log.info("Method : {}", attr.getRequest().getMethod());
+	    }
 
-        try {
+	    long start = System.currentTimeMillis();
 
-            Object result = joinPoint.proceed();
-
-            log.info("Controller executed successfully");
-
-            return result;
-
-        } catch (Exception ex) {
-
-            log.error("Exception in {}", joinPoint.getSignature().toShortString(), ex);
-            throw ex;
-
-        } finally {
-
-            log.info("========== API END ==========");
-            log.info("Time Taken : {} ms",
-                    System.currentTimeMillis() - start);
-        }
-    }
+	    try {
+	        return joinPoint.proceed();
+	    } finally {
+	        log.info("{} executed in {} ms",
+	                joinPoint.getSignature().toShortString(),
+	                System.currentTimeMillis() - start);
+	    }
+	}
 }
