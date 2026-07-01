@@ -27,7 +27,9 @@ public interface BookingRepository extends SoftDeleteRepository<Booking, Long>, 
 	
 	List<Booking> findByIsDeletedFalseAndIsActiveTrueAndHotelId(Long hotelId);
 	
-	 Optional<Booking> findByGuestDetailsId(Long guestDetailsId);
+	 Booking findByGuestDetailsId(Long guestDetailsId);
+	 
+	 
 	
 	}	
 	

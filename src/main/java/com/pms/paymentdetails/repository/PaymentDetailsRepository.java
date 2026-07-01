@@ -36,6 +36,8 @@ public interface PaymentDetailsRepository extends SoftDeleteRepository<PaymentDe
 	@Query("SELECT p FROM PaymentDetails p WHERE p.hotelId = :hotelId")
 	List<PaymentDetails> findPaymentDetails(@Param("hotelId") Long hotelId);
 	
+	List<PaymentDetails> findByGuestDetailsId(Long guestId);
+	
 	
 
 }

@@ -34,7 +34,7 @@ public class GuestSearchResponseDTO {
     
     private Long hotelId;
     
-    /*private String paymentType;
+    private String paymentType;
     
     private String transactionNo;
     
@@ -46,7 +46,7 @@ public class GuestSearchResponseDTO {
     
     private String bookingType;
     
-    private String bookingRefNo;*/
+    private String bookingRefNo;
 
 	public GuestSearchResponseDTO(Long guestId, String firstName, String lastName, String documentNumber,
 			String roomName, LocalDateTime checkInDate, LocalDateTime checkOutDate, Double totalRental, Long hotelId,

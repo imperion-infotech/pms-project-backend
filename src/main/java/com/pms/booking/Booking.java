@@ -39,6 +39,7 @@ public class Booking extends BaseEntity{
     private Long guestDetailsId;
     private Long rentDetailsId;
     private String source;
+    private String bookingRefNo;
     
     
 //    @ManyToOne
