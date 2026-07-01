@@ -27,38 +27,38 @@ public class DiscountController {
 
     private final IDiscountService service;
 
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_CREATE')")		
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_CREATE')")		
     @PostMapping("/user/creatediscount")
     public DiscountDTO createDiscount(@RequestBody DiscountDTO dto) {
         return service.createDiscount(dto);
     }
 
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_UPDATE')")
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_UPDATE')")
     @PutMapping("/user/updatediscount/{id}")
     public DiscountDTO updateDiscount(@PathVariable Long id,
                               @RequestBody DiscountDTO dto) {
         return service.updateDiscount(id, dto);
     }
 
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
     @GetMapping("/user/getdiscount/{id}")
     public DiscountDTO getByDiscountId(@PathVariable Long id) {
         return service.getByDiscountId(id);
     }
 
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
     @GetMapping("/user/getalldiscount")
     public List<DiscountDTO> getAllDiscount() {
         return service.getAllDiscount();
     }
 
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_DELETE')")
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_DELETE')")
     @DeleteMapping("/user/deletediscount/{id}")
     public Boolean deleteDiscount(@PathVariable Long id) {
         return service.deleteDiscount(id);
     }
     
-    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
+//    @PreAuthorize("@permissionChecker.hasPermission(authentication, 'DISCOUNT_VIEW')")
     @GetMapping("/user/guest/{guestId}")
     public ResponseEntity<List<DiscountDTO>> getDiscountsByGuestId(
             @PathVariable Long guestId) {

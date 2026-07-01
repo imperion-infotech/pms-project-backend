@@ -37,7 +37,7 @@ public class PaymentDetailsController {
 	private IPaymentDetailsService service;
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_VIEW')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_VIEW')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_VIEW')")
 	@GetMapping("/user/getAllpaymentdetails")
 	public ResponseEntity<List<PaymentDetails>> getPaymentDetails() {
 		List<PaymentDetails> paymentDetails = service.getAllPaymentDetails();
@@ -45,7 +45,7 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_VIEW')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_VIEW')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_VIEW')")
 	@GetMapping("/user/getpaymentdetails/{id}")
 	public ResponseEntity<PaymentDetails> getPaymentDetails(@PathVariable("id") Long id) {
 		PaymentDetails paymentDetails = service.getPaymentDetailsById(id);
@@ -53,7 +53,7 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_CREATE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_CREATE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_CREATE')")
 	@PostMapping("/admin/createpaymentdetails")
 	public ResponseEntity<?> createPaymentDetails(@RequestBody PaymentDetails paymentDetails) {
 		// Validate input
@@ -87,7 +87,7 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_UPDATE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_UPDATE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_UPDATE')")
 	@PutMapping("/admin/updatepaymentdetails/{id}")
 	public ResponseEntity<?> updatePaymentDetails(@PathVariable Long id, @RequestBody PaymentDetails paymentDetails) {
 		// Validate input
@@ -135,7 +135,7 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_DELETE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_DELETE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_DELETE')")
 	@DeleteMapping("/admin/deletepaymentdetails/{id}")
 	public ResponseEntity<String> deletePaymentDetails(@PathVariable("id") Long id) {
 		boolean isDeleted = service.deletePaymentDetails(id);
@@ -158,14 +158,14 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_GET_RECEIPT_NO')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_GET_RECEIPT_NO')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_GET_RECEIPT_NO')")
 	@GetMapping("/user/getreceiptno")
 	public ResponseEntity<String> getReceiptNo() {
 		return new ResponseEntity<String>(service.getReceiptNo(), HttpStatus.OK);
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_UPDATE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_UPDATE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_UPDATE')")
 	@PostMapping("/admin/update-payment-details")
 	public ResponseEntity<?> updatePayment(@RequestBody PaymentApprovalRequestDTO request) {
 
@@ -173,7 +173,7 @@ public class PaymentDetailsController {
 	}
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_DELETE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_DELETE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_DELETE')")
 //	@PostMapping("/delete-payment-details")
 	public ResponseEntity<?> deletePayment(@RequestBody PaymentApprovalRequestDTO request) {
 

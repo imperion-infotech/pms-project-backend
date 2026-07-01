@@ -138,6 +138,8 @@ public class GuestSearchServiceImpl implements IGuestSearchService {
 
             if (request.getTotalRental() != null && (rental == null ||
                     !rental.equals(request.getTotalRental()))) return null;
+            
+           
 
             return new GuestSearchResponseDTO(
                     g.getId(),

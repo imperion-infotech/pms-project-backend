@@ -35,7 +35,7 @@ public class OtherChargeDetailsController {
 	private IOtherChargeDetailsService service;
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_VIEW')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
 	@GetMapping("/user/getallotherchargedetails")
 	public ResponseEntity<List<OtherChargeDetails>> getOtherChargeDetails() {
 		List<OtherChargeDetails> otherChargeDetails = service.getAllOtherChargeDetails();
@@ -43,7 +43,7 @@ public class OtherChargeDetailsController {
 	}
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_VIEW')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
 	@GetMapping("/user/getotherchargedetails/{id}")
 	public ResponseEntity<OtherChargeDetails> getOtherChargeDetails(@PathVariable("id") Long id) {
 		OtherChargeDetails otherChargeDetails = service.getOtherChargeDetailsById(id);
@@ -51,7 +51,7 @@ public class OtherChargeDetailsController {
 	}
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_CREATE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_CREATE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_CREATE')")
 	@PostMapping("/admin/createotherchargedetails")
 	public ResponseEntity<?> createOtherChargeDetails(@RequestBody OtherChargeDetails otherChargeDetails) {
 		// Validate input
@@ -77,7 +77,7 @@ public class OtherChargeDetailsController {
 	
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_UPDATE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_UPDATE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_UPDATE')")
 	@PutMapping("/admin/updateotherchargedetails/{id}")
 	public ResponseEntity<?> updateOtherChargeDetails(@PathVariable Long id, @RequestBody OtherChargeDetails otherChargeDetails) {
 		
@@ -117,7 +117,7 @@ public class OtherChargeDetailsController {
 	}
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_DELETE')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_DELETE')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_DELETE')")
 	@DeleteMapping("/admin/deleteotherchargedetails/{id}")
 	public ResponseEntity<String> deleteOtherChargeDetails(@PathVariable("id") Long id) {
 		boolean isDeleted = service.deleteOtherChargeDetails(id);
@@ -130,7 +130,7 @@ public class OtherChargeDetailsController {
 	}
 	
 //	@PreAuthorize("hasAuthority('OTHER_CHARGE_DETAILS_VIEW')")
-	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
+//	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'OTHER_CHARGE_DETAILS_VIEW')")
 	@GetMapping("/user/other-charge-details/{guestId}")
 	public ResponseEntity<List<OtherChargeDetailsResponseDTO>> getOtherChargeDetailsByGuest(@PathVariable Long guestId) {
 
