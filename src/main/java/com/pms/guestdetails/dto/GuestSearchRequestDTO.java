@@ -13,9 +13,7 @@ import lombok.Data;
 @Data
 public class GuestSearchRequestDTO {
 
-    private String firstName;
-
-    private String lastName;
+	private String guestName;
 
     private String documentNumber;
 
@@ -32,4 +30,6 @@ public class GuestSearchRequestDTO {
     private Double totalRental;
     
     private Long hotelId;
+    
+    private String cardNumber;
 }

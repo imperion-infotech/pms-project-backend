@@ -278,13 +278,13 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 //	                .orElseThrow(() -> new RuntimeException(
 //	                        "Booking not found for guestDetailsId : " + guestDetailsId));
 			
-			Booking booking = bookingRepo.findByGuestDetailsId(guestDetailsId);
+			List<Booking> bookings  = bookingRepo.findByGuestDetailsId(guestDetailsId);
 
-			if (booking == null) {
+			if (bookings == null) {
 			    throw new RuntimeException("Booking not found for guestDetailsId: " + guestDetailsId);
 			}
 	        
-	        return booking;
+	        return bookings.get(0);
 	        
 	    }
 

@@ -157,14 +157,13 @@ public class ReportController {
 
 	@GetMapping("/housekeeping-report")
 	public ResponseEntity<byte[]> getHouseKeepingReport(@RequestParam Long hotelId,
-			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
-			@RequestParam LocalDate toDate, @RequestParam(defaultValue = "") Long buildingId,
-			@RequestParam(defaultValue = "") Long floorId, @RequestParam(defaultValue = "") String buildingName,
-			@RequestParam(defaultValue = "") String floorName) {
+			@RequestParam(defaultValue = "pdf") String format,
+			@RequestParam(defaultValue = "") Long buildingId,
+			@RequestParam(defaultValue = "") Long floorId)
+			{
 
 		try {
-			byte[] report = reportService.generateHouseKeepingReport(hotelId, format, fromDate, toDate, buildingId,
-					floorId, buildingName, floorName);
+			byte[] report = reportService.generateHouseKeepingReport(hotelId, format, buildingId,floorId);
 
 			// Set response headers based on format
 			HttpHeaders headers = new HttpHeaders();

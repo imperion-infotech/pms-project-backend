@@ -8,7 +8,6 @@ package com.pms.guestdetails.dto;
  */
 import java.time.LocalDateTime;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,7 +22,7 @@ public class GuestSearchResponseDTO {
     private String lastName;
 
     private String documentNumber;
-
+    
     private String roomName;
 
     private LocalDateTime checkInDate;
@@ -47,6 +46,8 @@ public class GuestSearchResponseDTO {
     private String bookingType;
     
     private String bookingRefNo;
+    
+//    private String documentTypeCategory;
 
 	public GuestSearchResponseDTO(Long guestId, String firstName, String lastName, String documentNumber,
 			String roomName, LocalDateTime checkInDate, LocalDateTime checkOutDate, Double totalRental, Long hotelId,
@@ -70,6 +71,8 @@ public class GuestSearchResponseDTO {
 		this.bookingType = bookingType;
 		this.bookingRefNo = bookingRefNo;
 	}
+
+	
     
    
 }

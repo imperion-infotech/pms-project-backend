@@ -303,8 +303,7 @@ public class ReportService {
     
     
     @Auditable(action = "CREATE", entity = "HOUSEKEEPINGREPORT")
-    public byte[] generateHouseKeepingReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,Long buildingId,Long floorId,
-    		String buildingName,String floorName) 
+    public byte[] generateHouseKeepingReport(Long hotelId, String format,Long buildingId,Long floorId)
     		throws Exception {
 
     	// Fetch hotel info
@@ -315,14 +314,8 @@ public class ReportService {
         String username = SecurityContextHolder.getContext()
             .getAuthentication().getName();
 
-        // Convert String dates to java.sql.Date
-        java.sql.Date sqlFromDate = java.sql.Date.valueOf(fromDate); // "2026-06-15"
-        java.sql.Date sqlToDate   = java.sql.Date.valueOf(toDate);
-
         Map<String, Object> params = new HashMap<>();
         params.put("hotelId",      hotelId);
-        params.put("fromDate",     sqlFromDate);   // ← must be java.sql.Date
-        params.put("toDate",       sqlToDate);     // ← must be java.sql.Date
         params.put("buildingId",   buildingId);    // null = all buildings
         params.put("floorId",      floorId);       // null = all floors
 
@@ -330,10 +323,6 @@ public class ReportService {
         params.put("hotelName",    hotel.getHotelName());
         params.put("hotelAddress", hotel.getAddress());
         params.put("hotelEmail",   hotel.getEmail() != null ? hotel.getEmail() : "");
-
-        // Building/floor name for header display
-        params.put("buildingName", buildingName != null ? buildingName : "All Buildings");
-        params.put("floorName",    floorName    != null ? floorName    : "All Floors");
 
         // Print info
         params.put("printedBy",    username);

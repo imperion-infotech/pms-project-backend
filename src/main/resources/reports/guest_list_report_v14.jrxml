@@ -53,7 +53,8 @@ FROM (
         CASE
             WHEN dd.document_number IS NOT NULL
              AND dt.document_type_name IS NOT NULL
-            THEN UPPER(dt.document_type_name) || ' : ' || dd.document_number
+--            THEN UPPER(dt.document_type_name) || ' : ' || dd.document_number
+             THEN  dd.document_number
             ELSE '--N/A--'
         END                                        AS id_info,
 
@@ -68,20 +69,20 @@ FROM (
             ELSE 5
         END                                        AS status_sort
 
-    FROM multi_motels_pms_db.guest_details gd
+    FROM guest_details gd
 
-    JOIN multi_motels_pms_db.personal_details per
+    JOIN personal_details per
         ON gd.personal_details_id = per.id
 
-    LEFT JOIN multi_motels_pms_db.room_master rm
+    LEFT JOIN room_master rm
         ON gd.room_master_id = rm.id
 
-    LEFT JOIN multi_motels_pms_db.document_details dd
+    LEFT JOIN document_details dd
         ON dd.personal_details_id = gd.personal_details_id
        AND (dd.is_deleted = false OR dd.is_deleted IS NULL)
        AND (dd.is_active = true OR dd.is_active IS NULL)
 
-    LEFT JOIN multi_motels_pms_db.document_type dt
+    LEFT JOIN document_type dt
         ON dd.document_type_id = dt.id
        AND UPPER(dt.document_type_name) NOT LIKE '%CREDIT%'
        AND UPPER(dt.document_type_name) NOT LIKE '%DEBIT%'
@@ -91,6 +92,7 @@ FROM (
       AND (gd.is_deleted = false OR gd.is_deleted IS NULL)
       AND (gd.is_active = true OR gd.is_active IS NULL)
       AND (per.is_deleted = false OR per.is_deleted IS NULL)
+      AND gd.guest_details_status IN ('Check-In', 'Reservation')
  AND ($P{GUEST_STATUS} IS NULL OR $P{GUEST_STATUS} = 'ALL' OR gd.guest_details_status = $P{GUEST_STATUS})
     ORDER BY
         gd.guest_details_id,
@@ -120,7 +122,6 @@ ORDER BY
 		<expression><![CDATA[$F{status_sort}]]></expression>
 		<groupHeader>
 			<band height="42" splitType="Stretch">
-				<!-- Status heading row -->
 				<element kind="rectangle" uuid="aabb1122-0000-0000-0000-000000000001" mode="Opaque" x="0" y="0" width="802" height="16" forecolor="#444444" backcolor="#444444"/>
 				<element kind="textField" uuid="aabb1122-0000-0000-0000-000000000002" x="4" y="1" width="798" height="14" forecolor="#FFFFFF" fontName="Arial" fontSize="10.0" bold="true" vTextAlign="Middle">
 					<expression><![CDATA[
@@ -131,7 +132,6 @@ ORDER BY
                         ($F{guest_status} != null ? $F{guest_status} : "Other")
                     ]]></expression>
 				</element>
-				<!-- Column header row -->
 				<element kind="rectangle" uuid="b1000001-0000-4000-8000-000000000001" mode="Opaque" x="0" y="18" width="802" height="23" forecolor="#CCCCCC" backcolor="#CCCCCC"/>
 				<element kind="staticText" uuid="b1000002-0000-4000-8000-000000000002" x="2" y="21" width="43" height="18" fontName="Arial" fontSize="9.0" bold="true" vTextAlign="Middle">
 					<text><![CDATA[Room]]></text>
@@ -154,10 +154,13 @@ ORDER BY
 				<element kind="staticText" uuid="b1000008-0000-4000-8000-000000000008" x="547" y="21" width="68" height="18" fontName="Arial" fontSize="9.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 					<text><![CDATA[Nationality]]></text>
 				</element>
-				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000009" x="617" y="21" width="185" height="18" fontName="Arial" fontSize="9.0" bold="true" vTextAlign="Middle">
+				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000018" x="617" y="21" width="80" height="18" fontName="Arial" fontSize="9.0" bold="true" vTextAlign="Middle">
+					<text><![CDATA[Doc Type]]></text>
+				</element>
+				<element kind="line" uuid="b1000016-0000-4000-8000-000000000019" x="695" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000009" x="697" y="21" width="105" height="18" fontName="Arial" fontSize="9.0" bold="true" vTextAlign="Middle">
 					<text><![CDATA[ID Info]]></text>
 				</element>
-				<!-- Column separator lines -->
 				<element kind="line" uuid="b1000010-0000-4000-8000-000000000010" x="45" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000011-0000-4000-8000-000000000011" x="175" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000012-0000-4000-8000-000000000012" x="325" y="18" width="1" height="23" forecolor="#AAAAAA"/>
@@ -193,7 +196,6 @@ ORDER BY
 		</element>
 		<element kind="line" uuid="634433be-433c-493f-a937-1bc515194089" x="0" y="75" width="802" height="1" forecolor="#AAAAAA"/>
 	</title>
-
 	<detail>
 		<band height="20" splitType="Stretch">
 			<element kind="textField" uuid="867fc629-8988-4a32-918e-1bf45eadf5e7" x="2" y="1" width="43" height="18" fontName="Arial" fontSize="9.0" blankWhenNull="true" vTextAlign="Middle">
@@ -220,7 +222,12 @@ ORDER BY
 			<element kind="textField" uuid="d1495176-ecdf-4727-b0f1-2024c92a2dba" x="547" y="1" width="68" height="18" fontName="Arial" fontSize="9.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
 				<expression><![CDATA[$F{nationality}]]></expression>
 			</element>
-			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347b" x="617" y="1" width="185" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" vTextAlign="Middle">
+			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347c" x="617" y="1" width="80" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" vTextAlign="Middle">
+				<expression><![CDATA[$F{doc_type}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="line" uuid="a1b2c3d4-0001-4000-8000-000000000012" x="695" y="0" width="1" height="20" forecolor="#CCCCCC"/>
+			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347b" x="697" y="1" width="105" height="18" fontName="Arial" fontSize="9.0" textAdjust="StretchHeight" blankWhenNull="true" vTextAlign="Middle">
 				<expression><![CDATA[$F{id_info}]]></expression>
 				<box leftPadding="2"/>
 			</element>

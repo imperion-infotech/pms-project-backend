@@ -69,7 +69,7 @@ static final Logger logger = LoggerFactory.getLogger(PersonalDetails.class);
     private String phone;
   
     @Email(message = "Invalid email format")
-    @Column(unique = false, nullable = false)
+//    @Column(unique = false, nullable = false)
     private String email;
     
     private String address;

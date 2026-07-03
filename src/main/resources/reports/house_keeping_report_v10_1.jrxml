@@ -1,0 +1,174 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="house_keeping_report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="ca513024-9916-4517-b70c-e4cd29333b9b">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="hotelId" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[0L]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelName" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelAddress" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="hotelEmail" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="buildingId" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="floorId" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Admin"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="printedOn" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[
+SELECT
+    ROW_NUMBER() OVER (
+        PARTITION BY b.building_id, f.floor_id
+        ORDER BY rm.room_name
+    )                                   AS sr_no,
+
+    rm.room_name                        AS room,
+    rt.room_type_name                   AS room_type,
+    rs.room_status_name                 AS status,
+
+    b.building_name                     AS building_name,
+    f.floor_name                        AS floor_name
+
+FROM multi_motels_pms_db.room_master rm
+
+LEFT JOIN multi_motels_pms_db.floor    f  ON f.floor_id    = rm.floor_id
+LEFT JOIN multi_motels_pms_db.building b  ON b.building_id = rm.building_id
+LEFT JOIN multi_motels_pms_db.hotel    h  ON h.id          = rm.hotel_id
+LEFT JOIN multi_motels_pms_db.room_type   rt ON rt.room_type_id   = rm.room_type_id
+LEFT JOIN multi_motels_pms_db.room_status rs ON rs.room_status_id = rm.room_status_id
+
+WHERE rm.hotel_id   = $P{hotelId}
+  AND rm.is_deleted = false
+  AND rm.is_active  = true
+  --AND rm.updated_on::date = CURRENT_DATE
+  AND ($P{buildingId} IS NULL OR rm.building_id = $P{buildingId})
+  AND ($P{floorId}    IS NULL OR rm.floor_id    = $P{floorId})
+
+ORDER BY b.building_name, f.floor_name, rm.room_name
+]]></query>
+	<field name="sr_no" class="java.lang.Long"/>
+	<field name="room" class="java.lang.String"/>
+	<field name="room_type" class="java.lang.String"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="building_name" class="java.lang.String"/>
+	<field name="floor_name" class="java.lang.String"/>
+	<group name="FloorGroup">
+		<expression><![CDATA[($F{building_name} != null ? $F{building_name} : "Unassigned Building") + " - " + ($F{floor_name} != null ? $F{floor_name} : "Unassigned Floor")]]></expression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="90" splitType="Stretch">
+		<element kind="textField" uuid="10ae4fcb-c98e-4930-b18a-6943e7524132" x="0" y="0" width="782" height="18" fontName="Arial" fontSize="14.0" blankWhenNull="true" bold="true">
+			<expression><![CDATA[$P{hotelName}]]></expression>
+		</element>
+		<element kind="textField" uuid="a9c89ec4-4b6f-4613-8fd5-148c8e374595" x="0" y="20" width="782" height="14" fontName="Arial" fontSize="9.0" blankWhenNull="true">
+			<expression><![CDATA[$P{hotelAddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="a6927d89-6a7b-41a7-9aa2-3b230ce0c442" x="0" y="36" width="782" height="14" fontName="Arial" fontSize="9.0" blankWhenNull="true">
+			<expression><![CDATA["E-mail: " + ($P{hotelEmail} != null ? $P{hotelEmail} : "")]]></expression>
+		</element>
+		<element kind="line" uuid="3cc21a9d-aed7-44c5-8003-7a4ecea99d1d" x="0" y="54" width="782" height="1" forecolor="#000000"/>
+		<element kind="textField" uuid="3357dbce-558f-4691-82c3-51fbfe3dbff4" x="0" y="62" width="500" height="16" fontName="Arial" fontSize="10.0" bold="true">
+			<expression><![CDATA["House Keeping Report For : " + new java.text.SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date())]]></expression>
+		</element>
+		<element kind="textField" uuid="7b1c4e2a-9f3d-4a6e-8b2c-5d9e1f0a3c4b" x="500" y="62" width="282" height="16" fontName="Arial" fontSize="9.0" hTextAlign="Right">
+			<expression><![CDATA["Building Id : " + ($P{buildingId} != null ? $P{buildingId}.toString() : "All") + "   |   Floor Id : " + ($P{floorId} != null ? $P{floorId}.toString() : "All")]]></expression>
+		</element>
+	</title>
+	<columnHeader height="20" splitType="Stretch">
+		<element kind="rectangle" uuid="ff4ef23a-dfc0-42db-b400-4ab740b22948" mode="Opaque" x="0" y="0" width="782" height="20" forecolor="#D0D0D0" backcolor="#D0D0D0"/>
+		<element kind="staticText" uuid="f626076c-d5fd-438d-84c6-cdd9575d28a5" x="0" y="2" width="30" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Sr No]]></text>
+		</element>
+		<element kind="staticText" uuid="8a7bf036-baf4-4728-92b7-c2f73e2109cd" x="30" y="2" width="65" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Room]]></text>
+		</element>
+		<element kind="staticText" uuid="4b200e82-fb5a-4f77-ab13-62d5fe00f5e3" x="95" y="2" width="55" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Room Type]]></text>
+		</element>
+		<element kind="staticText" uuid="ed7ceaee-58a9-4146-9760-42566aa07372" x="150" y="2" width="245" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Status]]></text>
+		</element>
+		<element kind="staticText" uuid="f3e7d5bd-d367-44b4-86ac-51c7b193e504" x="395" y="2" width="65" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Bathroom]]></text>
+		</element>
+		<element kind="staticText" uuid="cd6f1280-0102-4525-ab87-4473b0656ed7" x="460" y="2" width="60" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Towels]]></text>
+		</element>
+		<element kind="staticText" uuid="cec75216-14b9-4b46-b3e0-c649ab1058ba" x="520" y="2" width="60" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Bed Sheets]]></text>
+		</element>
+		<element kind="staticText" uuid="1e880dc6-f277-4118-92f3-878486295318" x="580" y="2" width="50" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Drapes]]></text>
+		</element>
+		<element kind="staticText" uuid="30ff4240-0216-4f0f-9fa9-b08c1da654a3" x="630" y="2" width="50" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Vacuum]]></text>
+		</element>
+		<element kind="staticText" uuid="60c12f90-7bf1-4339-88d2-372a1e1a4e92" x="680" y="2" width="52" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Dusting]]></text>
+		</element>
+		<element kind="staticText" uuid="79270152-75c5-4154-96f0-7f9741b937ea" x="732" y="2" width="50" height="16" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[AC]]></text>
+		</element>
+		<element kind="line" uuid="c2c53136-c5c1-4ae5-bd8c-8440620f8ecf" x="0" y="19" width="782" height="1" forecolor="#999999"/>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<element kind="textField" uuid="cb83ee41-fbac-417a-b46d-ec43ad7f4866" x="0" y="1" width="30" height="14" fontName="Arial" fontSize="8.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{sr_no}]]></expression>
+			</element>
+			<element kind="textField" uuid="398e9eaa-60c9-47fc-a058-96bc9f5f6b59" x="30" y="1" width="65" height="14" fontName="Arial" fontSize="10.0" blankWhenNull="true" vTextAlign="Middle">
+				<expression><![CDATA[$F{room}]]></expression>
+			</element>
+			<element kind="textField" uuid="88c9e6b4-152a-40cc-9d53-9637f99cf3e5" x="95" y="1" width="55" height="14" fontName="Arial" fontSize="10.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{room_type}]]></expression>
+			</element>
+			<element kind="textField" uuid="6185518e-a893-4bf4-ad29-a163f013c6df" x="150" y="1" width="245" height="14" fontName="Arial" fontSize="10.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{status}]]></expression>
+			</element>
+			<element kind="rectangle" uuid="88f085f1-f735-429e-b2f5-fae17a070d77" mode="Opaque" x="395" y="1" width="65" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="2085fd64-ff18-438c-8fc8-623bfa1c1b38" mode="Opaque" x="460" y="1" width="60" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="a4b21b92-9458-457a-9883-86a32e0eb628" mode="Opaque" x="520" y="1" width="60" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="c54c3e6e-8c90-4cd9-b3ee-798515aa518e" mode="Opaque" x="580" y="1" width="50" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="2199917f-6c04-4d3e-8249-c4721a3d713d" mode="Opaque" x="630" y="1" width="50" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="119357cc-c64a-49e8-884b-8f255bc614a6" mode="Opaque" x="680" y="1" width="52" height="14" forecolor="#CCCCCC"/>
+			<element kind="rectangle" uuid="2b5e9fc4-7c73-4f53-b29a-b77d18758fd5" mode="Opaque" x="732" y="1" width="50" height="14" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="01792d2d-c37b-45e2-ba74-4b062ea1515f" mode="Opaque" x="0" y="15" width="782" height="1" forecolor="#0F0B0B"/>
+		</band>
+	</detail>
+	<pageFooter height="40" splitType="Stretch">
+		<element kind="line" uuid="ce0dfd78-ecbf-4d45-8902-7861be881dc3" x="0" y="0" width="782" height="1" forecolor="#000000"/>
+		<element kind="textField" uuid="5ee01e19-c7d0-48a1-b638-767f60a55561" x="0" y="6" width="250" height="14" fontName="Arial" fontSize="8.0">
+			<expression><![CDATA["Printed By : " + $P{printedBy}]]></expression>
+		</element>
+		<element kind="textField" uuid="6556a304-0dce-49d9-8275-43d691095e58" x="0" y="22" width="300" height="14" fontName="Arial" fontSize="8.0">
+			<expression><![CDATA["Printed On : " + $P{printedOn}]]></expression>
+		</element>
+		<element kind="staticText" uuid="16fdec2e-186c-4f94-bbef-29364db81050" x="291" y="23" width="200" height="14" fontName="Arial" fontSize="8.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[House-Keeper's Signature]]></text>
+		</element>
+		<element kind="line" uuid="57f17584-0a80-4996-a82e-98d4a61d92d6" x="291" y="36" width="200" height="1" forecolor="#000000"/>
+		<element kind="staticText" uuid="dcff51b5-0265-4aeb-b3fa-a247d19149c3" x="500" y="6" width="282" height="14" fontName="Arial" fontSize="7.0" italic="true" hTextAlign="Right">
+			<text><![CDATA[* Room(s) has today's arrival]]></text>
+		</element>
+		<element kind="textField" uuid="bed7a00f-0a13-4a42-bf33-73d77af36d82" x="600" y="22" width="182" height="14" fontName="Arial" fontSize="8.0" evaluationTime="Report" hTextAlign="Right">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER} + " of " + $V{PAGE_COUNT}]]></expression>
+		</element>
+	</pageFooter>
+</jasperReport>
