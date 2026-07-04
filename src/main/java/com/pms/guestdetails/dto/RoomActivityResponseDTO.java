@@ -18,15 +18,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoomActivityResponseDTO {
 
-    private Integer roomId;
-
+    private Long roomMasterId;
     private Long guestDetailsId;
-
     private String guestName;
-
     private LocalDateTime checkInDateTime;
-
     private LocalDateTime checkOutDateTime;
-
     private String guestDetailsStatus;
+    private Long personalDetailsId;
+    private LocalDateTime createdOn;
+    
 }

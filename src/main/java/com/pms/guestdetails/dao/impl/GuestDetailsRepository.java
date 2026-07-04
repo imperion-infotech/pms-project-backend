@@ -20,14 +20,14 @@ import com.pms.guestdetails.dto.RoomActivityResponseDTO;
  * 
  */
 public interface GuestDetailsRepository
-		extends SoftDeleteRepository<GuestDetails, Long>, JpaSpecificationExecutor<GuestDetails> {
+		extends SoftDeleteRepository<GuestDetails, Long>, JpaSpecificationExecutor<GuestDetails>,GuestDetailsRepositoryCustom  {
 	GuestDetails findByIdAndHotelIdAndIsDeletedFalse(Long id, Long hotelId);
 
 	List<GuestDetails> findByHotelIdAndIsDeletedFalse(Long hotelId);
 
 	List<GuestDetails> findByIsDeletedFalse();
 
-	@Query("""
+	/*@Query("""
 			    SELECT new com.pms.guestdetails.dto.RoomActivityResponseDTO(
 
 			        gd.roomMasterId,
@@ -53,7 +53,40 @@ public interface GuestDetailsRepository
 
 			    ORDER BY gd.checkInDate ASC
 			""")
-	List<RoomActivityResponseDTO> getRoomActivities(LocalDateTime fromDate, LocalDateTime toDate);
+	List<RoomActivityResponseDTO> getRoomActivities(LocalDateTime fromDate, LocalDateTime toDate);*/
+	
+	
+	@Query(value = """
+		    SELECT
+		        latest.room_master_id,
+		        latest.guest_details_id,
+		        latest.guest_name,
+		        latest.check_in_date,
+		        latest.check_out_date,
+		        latest.guest_details_status,
+		        latest.personal_details_id,
+		        latest.created_on
+		    FROM (
+		        SELECT DISTINCT ON (gd.room_master_id)
+		            gd.room_master_id,
+		            gd.guest_details_id,
+		            CONCAT(pd.first_name, ' ', pd.last_name) AS guest_name,
+		            gd.check_in_date,
+		            gd.check_out_date,
+		            gd.guest_details_status,
+		            pd.id AS personal_details_id,
+		            gd.created_on
+		        FROM guest_details gd
+		        LEFT JOIN personal_details pd
+		            ON pd.id = gd.personal_details_id
+		        WHERE gd.created_on BETWEEN :fromDate AND :toDate
+		        ORDER BY gd.room_master_id, gd.guest_details_id DESC
+		    ) latest
+		    ORDER BY latest.check_in_date ASC
+		    """, nativeQuery = true)
+		List<RoomActivityResponseDTO> getRoomActivities(
+		        @Param("fromDate") LocalDateTime fromDate,
+		        @Param("toDate") LocalDateTime toDate);
 
 	List<GuestDetails> findByHotelIdAndIsDeletedFalseAndGuestDetailsStatus(Long hotelId, String guestCurrentStatus);
 

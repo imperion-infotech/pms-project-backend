@@ -166,7 +166,7 @@ public class PaymentDetailsController {
 
 //	@PreAuthorize("hasAuthority('PAYMENT_DETAILS_UPDATE')")
 //	@PreAuthorize("@permissionChecker.hasPermission(authentication, 'PAYMENT_DETAILS_UPDATE')")
-	@PostMapping("/admin/update-payment-details")
+//	@PostMapping("/admin/update-payment-details")
 	public ResponseEntity<?> updatePayment(@RequestBody PaymentApprovalRequestDTO request) {
 
 		return ResponseEntity.ok(service.updatePaymentWithApproval(request));

@@ -39,6 +39,7 @@ public class OtherChargeDetailsController {
 	@GetMapping("/user/getallotherchargedetails")
 	public ResponseEntity<List<OtherChargeDetails>> getOtherChargeDetails() {
 		List<OtherChargeDetails> otherChargeDetails = service.getAllOtherChargeDetails();
+		logger.info("::::::otherChargeDetails:::Count"+otherChargeDetails.size());
 		return new ResponseEntity<List<OtherChargeDetails>>(otherChargeDetails, HttpStatus.OK);
 	}
 	
@@ -135,7 +136,7 @@ public class OtherChargeDetailsController {
 	public ResponseEntity<List<OtherChargeDetailsResponseDTO>> getOtherChargeDetailsByGuest(@PathVariable Long guestId) {
 
 		List<OtherChargeDetailsResponseDTO> response = service.getOtherChargeDetailsByGuestId(guestId);
-
+		logger.info("Other charge details count in guest wise api:::"+response.size());
 		return ResponseEntity.ok(response);
 	}
 	

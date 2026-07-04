@@ -30,13 +30,14 @@ public class PaymentDetailsResponseDTO {
 		private String refundType;
 		private String transactionId;
 		private String refundAccountNo;
+		private String paymentType;
 		
 	    
 	    public PaymentDetailsResponseDTO()
 	    {}	    
 	    public PaymentDetailsResponseDTO(Long id, Double amount, Double totalAmount, String paymentMode,
 				String receiptNumber, String remark, LocalDateTime paymentDate,Long guestDetailsId, Boolean isDeleted,Boolean isActive,
-				Boolean isRefund,Double refundAmount,String refundType,String transactionId,String refundAccountNo) {
+				Boolean isRefund,Double refundAmount,String refundType,String transactionId,String refundAccountNo,String paymentType) {
 			super();
 			this.id = id;
 			this.amount = amount;
@@ -53,6 +54,7 @@ public class PaymentDetailsResponseDTO {
 			this.refundType=refundType;
 			this.transactionId=transactionId;
 			this.refundAccountNo=refundAccountNo;
+			this.paymentType=paymentType;
 		}
 		public Long getId() {
 			return id;
@@ -96,6 +98,7 @@ public class PaymentDetailsResponseDTO {
 		public void setPaymentDate(LocalDateTime paymentDate) {
 			this.paymentDate = paymentDate;
 		}
+		
 		
 }
 

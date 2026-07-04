@@ -19,14 +19,11 @@ public class GuestSearchRequestDTO {
 
     private String roomName;
 
-    private LocalDateTime checkInFromDate;
-
-    private LocalDateTime checkInToDate;
-
-    private LocalDateTime checkOutFromDate;
-
-    private LocalDateTime checkOutToDate;
-
+    
+    private LocalDateTime createdFromDate;
+    
+    private LocalDateTime createdToDate;
+    
     private Double totalRental;
     
     private Long hotelId;

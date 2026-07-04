@@ -170,55 +170,36 @@ public class GuestDetailsServiceImpl extends BaseHotelService implements IGuestD
 	}
 
 	@Override
-	public List<RoomActivityResponseDTO> getRoomActivities(LocalDateTime fromDate, LocalDateTime toDate) {
-		
-		Long hotelId = HotelContext.getHotelId();
-		if (hotelId == null) {
-			throw new ResourceNotFoundException("Hotel not selected");
-		}
-		validateHotelAccess(hotelId);
+	public List<RoomActivityResponseDTO> getRoomActivities(LocalDateTime fromDate,
+	                                                       LocalDateTime toDate) {
 
-		List<RoomActivityResponseDTO> responseList = guestDetailsRepository.getRoomActivities(fromDate, toDate);
+	    Long hotelId = HotelContext.getHotelId();
+	    if (hotelId == null) {
+	        throw new ResourceNotFoundException("Hotel not selected");
+	    }
 
-		/*
-		 * SET ACTIVITY TYPE
-		 */
-		for (RoomActivityResponseDTO dto : responseList) {
+	    validateHotelAccess(hotelId);
 
-			/*
-			 * CHECK-IN
-			 */
-			if (dto.getCheckInDateTime() != null && dto.getCheckOutDateTime() == null) {
+	    List<RoomActivityResponseDTO> responseList =
+	            guestDetailsRepository.getRoomActivities(hotelId, fromDate, toDate);
 
-				dto.setGuestDetailsStatus("CHECK_IN");
-			}
+	    for (RoomActivityResponseDTO dto : responseList) {
 
-			/*
-			 * CHECK-OUT
-			 */
-			else if (dto.getCheckOutDateTime() != null) {
+	        if (dto.getCheckInDateTime() != null && dto.getCheckOutDateTime() == null) {
+	            dto.setGuestDetailsStatus("CHECK_IN");
 
-				dto.setGuestDetailsStatus("CHECK_OUT");
-			}
+	        } else if (dto.getCheckOutDateTime() != null) {
+	            dto.setGuestDetailsStatus("CHECK_OUT");
 
-			/*
-			 * RESERVATION
-			 */
-			else if ("RESERVATION".equalsIgnoreCase(dto.getGuestDetailsStatus())) {
+	        } else if ("RESERVATION".equalsIgnoreCase(dto.getGuestDetailsStatus())) {
+	            dto.setGuestDetailsStatus("RESERVATION");
 
-				dto.setGuestDetailsStatus("RESERVATION");
-			}
+	        } else if ("CHANGE_ROOM".equalsIgnoreCase(dto.getGuestDetailsStatus())) {
+	            dto.setGuestDetailsStatus("CHANGE_ROOM");
+	        }
+	    }
 
-			/*
-			 * CHANGE ROOM
-			 */
-			else if ("CHANGE_ROOM".equalsIgnoreCase(dto.getGuestDetailsStatus())) {
-
-				dto.setGuestDetailsStatus("CHANGE_ROOM");
-			}
-		}
-
-		return responseList;
+	    return responseList;
 	}
 	
 	public void updateGuestStatus(Long guestDetailsId, String newStatus) {

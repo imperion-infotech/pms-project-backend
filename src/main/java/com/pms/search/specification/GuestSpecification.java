@@ -21,32 +21,24 @@ import jakarta.persistence.criteria.Predicate;
 public class GuestSpecification {
 
 	  public Specification<GuestDetails> search(
-	            LocalDateTime checkInFromDate, LocalDateTime checkInToDate,
-	            LocalDateTime checkOutFromDate, LocalDateTime checkOutToDate,
-	            Long hotelId) {
+			  LocalDateTime createdFromDate, LocalDateTime createdToDate,
+		        Long hotelId) {
 
-	        return (root, query, cb) -> {
-	            List<Predicate> predicates = new ArrayList<>();
-	            
-	            if (hotelId != null) {
-	                predicates.add(cb.equal(root.get("hotelId"), hotelId));
-	            }
+		  return (root, query, cb) -> {
+		        List<Predicate> predicates = new ArrayList<>();
 
-	            // Date filters (these fields exist directly on GuestDetails)
-	            if (checkInFromDate != null) {
-	                predicates.add(cb.greaterThanOrEqualTo(root.get("checkInDate"), checkInFromDate));
-	            }
-	            if (checkInToDate != null) {
-	                predicates.add(cb.lessThanOrEqualTo(root.get("checkInDate"), checkInToDate));
-	            }
-	            if (checkOutFromDate != null) {
-	                predicates.add(cb.greaterThanOrEqualTo(root.get("checkOutDate"), checkOutFromDate));
-	            }
-	            if (checkOutToDate != null) {
-	                predicates.add(cb.lessThanOrEqualTo(root.get("checkOutDate"), checkOutToDate));
-	            }
+		        if (hotelId != null) {
+		            predicates.add(cb.equal(root.get("hotelId"), hotelId));
+		        }
 
-	            return cb.and(predicates.toArray(new Predicate[0]));
-	        };
+		        if (createdFromDate != null) {
+		            predicates.add(cb.greaterThanOrEqualTo(root.get("createdOn"), createdFromDate));
+		        }
+		        if (createdToDate != null) {
+		            predicates.add(cb.lessThanOrEqualTo(root.get("createdOn"), createdToDate));
+		        }
+
+		        return cb.and(predicates.toArray(new Predicate[0]));
+		    };
 	    }
 }

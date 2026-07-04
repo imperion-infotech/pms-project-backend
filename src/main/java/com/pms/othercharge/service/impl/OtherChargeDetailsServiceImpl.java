@@ -154,7 +154,10 @@ public class OtherChargeDetailsServiceImpl implements IOtherChargeDetailsService
 			dto.setRefundAccountNo(p.getRefundAccountNo());
 			dto.setIsActive(p.getIsActive());
 			dto.setIsDeleted(p.getIsDeleted());
-
+			if(p.getPaymentType()!=null)
+			{
+			dto.setPaymentType(p.getPaymentType().getPaymentTypeName());
+			}
 			return dto;
 		}).collect(Collectors.toList());
 	}

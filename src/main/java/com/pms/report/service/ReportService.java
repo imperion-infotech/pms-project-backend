@@ -350,63 +350,58 @@ public class ReportService {
     }
     
     @Auditable(action = "CREATE", entity = "SHIFTREPORT")
-    public byte[] generateShiftReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate) {
-  	   // Fetch hotel details from DB
-      Hotel hotel = hotelRepository.findById(hotelId)
-                      .orElseThrow(() -> new RuntimeException("Hotel not found"));
+    public byte[] generateShiftReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate, Long userId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                        .orElseThrow(() -> new RuntimeException("Hotel not found"));
 
-      // Get logged in username
-      String username = SecurityContextHolder.getContext()
-                          .getAuthentication().getName();
-      
-      Map<String, Object> params = new HashMap<>();
-      params.put("hotelId",      hotelId);
-      params.put("hotelName",    hotel.getHotelName());
-      params.put("hotelAddress", hotel.getAddress());
-      
-      params.put("hotelPhone",   hotel.getContactNumber());
-      params.put("hotelEmail",   hotel.getEmail());
-      params.put("printedBy",    username);
-//      params.put("printedOn",    new Date());
-      params.put("printedOn",
-    	        LocalDateTime.now()
-    	                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-      params.put("REPORT_DATE",
-          new SimpleDateFormat("M/d/yyyy").format(new Date()));
-          
-      params.put("fromDate", java.sql.Date.valueOf(fromDate));
-      params.put("toDate", java.sql.Date.valueOf(toDate));
-      
-      
-      JasperPrint jasperPrint = null;
-      try {
-           jasperPrint = JasperFillManager.fillReport(
-                  reportCompiler.getShiftReport(),
-                  params,
-                  dataSource.getConnection()
-          );
+        String username = SecurityContextHolder.getContext()
+                            .getAuthentication().getName();
 
-     
+        Map<String, Object> params = new HashMap<>();
+        params.put("hotelId",      hotelId);
+        params.put("hotelName",    hotel.getHotelName());
+        params.put("hotelAddress", hotel.getAddress());
+        params.put("hotelPhone",   hotel.getContactNumber());
+        params.put("hotelEmail",   hotel.getEmail());
+        params.put("printedBy",    username);
+        params.put("printedOn",
+            LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
 
-      // export PDF or Excel...
-   // Export
-      if ("xlsx".equalsIgnoreCase(format)) {
-          JRXlsxExporter exporter = new JRXlsxExporter();
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-          exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
-          exporter.exportReport();
-          return out.toByteArray();
-      } else {
-          return JasperExportManager.exportReportToPdf(jasperPrint);
-      }
-      
-      } catch (JRException | SQLException e) {
-    	  logger.error("Error generating Shift Report", e);
-    	  e.printStackTrace();
-          throw new RuntimeException("Error generating Shift Report", e);
-      }
-}
+        params.put("REPORT_DATE",
+            new SimpleDateFormat("M/d/yyyy").format(new Date()));
+
+        params.put("fromDate", java.sql.Date.valueOf(fromDate));
+        params.put("toDate", java.sql.Date.valueOf(toDate));
+        params.put("userId", userId); // null → all users; a real ID → that user only
+
+        JasperPrint jasperPrint = null;
+        try {
+            jasperPrint = JasperFillManager.fillReport(
+                    reportCompiler.getShiftReport(),
+                    params,
+                    dataSource.getConnection()
+            );
+
+            if ("xlsx".equalsIgnoreCase(format)) {
+                JRXlsxExporter exporter = new JRXlsxExporter();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+                exporter.exportReport();
+                return out.toByteArray();
+            } else {
+                return JasperExportManager.exportReportToPdf(jasperPrint);
+            }
+
+        } catch (JRException | SQLException e) {
+            logger.error("Error generating Shift Report", e);
+            e.printStackTrace();
+            throw new RuntimeException("Error generating Shift Report", e);
+        }
+    }
+    
+    
     @Auditable(action = "CREATE", entity = "MONTHLY_COLLECTION_PAYMENTTYPE_REPORT")
     public byte[] generateMonthlyCollectionPaymentTypeReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate) {
    	   // Fetch hotel details from DB

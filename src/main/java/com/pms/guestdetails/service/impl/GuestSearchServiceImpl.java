@@ -175,11 +175,9 @@ public class GuestSearchServiceImpl implements IGuestSearchService {
     @Override
     public List<GuestSearchResponseDTO> searchGuests(GuestSearchRequestDTO request) {
 
-        Specification<GuestDetails> spec = guestSpecification.search(
-                request.getCheckInFromDate(),
-                request.getCheckInToDate(),
-                request.getCheckOutFromDate(),
-                request.getCheckOutToDate(),
+    	Specification<GuestDetails> spec = guestSpecification.search(
+                request.getCreatedFromDate(),
+                request.getCreatedToDate(),
                 request.getHotelId()
         );
 

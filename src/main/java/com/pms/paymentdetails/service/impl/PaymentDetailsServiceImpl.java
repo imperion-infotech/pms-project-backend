@@ -301,6 +301,9 @@ public class PaymentDetailsServiceImpl extends BaseHotelService implements IPaym
 	 		dto.setRefundType(p.getRefundType());
 	 		dto.setRefundAccountNo(p.getRefundAccountNo());
 	 		dto.setTransactionId(p.getTransactionId());
+	 		if(p.getPaymentType() != null) {
+	 			dto.setPaymentType(p.getPaymentType().getPaymentTypeName());
+	 		}
 	 		
 	 		 if(p.getGuestDetails() != null)
 	         	dto.setGuestDetailsId(p.getGuestDetails().getId());

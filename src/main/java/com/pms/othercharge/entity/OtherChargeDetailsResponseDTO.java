@@ -42,6 +42,8 @@ public class OtherChargeDetailsResponseDTO {
 	
 	private Boolean isActive;
 	
+	private String paymentType;
+	
 	
 	
 	public OtherChargeDetailsResponseDTO() {
@@ -52,7 +54,7 @@ public class OtherChargeDetailsResponseDTO {
 
 	public OtherChargeDetailsResponseDTO(Long id, Double totalCharges, Double amount, String remark,
 			Boolean displayOnFolio, Long guestDetailsId, Boolean isRefund, Double refundAmount, String refundType,
-			String transactionId, String refundAccountNo, Boolean isDeleted, Boolean isActive) {
+			String transactionId, String refundAccountNo, Boolean isDeleted, Boolean isActive,String paymentType) {
 		super();
 		this.id = id;
 		this.totalCharges = totalCharges;
@@ -67,6 +69,7 @@ public class OtherChargeDetailsResponseDTO {
 		this.refundAccountNo = refundAccountNo;
 		this.isDeleted = isDeleted;
 		this.isActive = isActive;
+		this.paymentType=paymentType;
 	}
 
 }

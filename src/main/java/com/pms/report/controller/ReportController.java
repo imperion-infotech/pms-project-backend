@@ -186,31 +186,31 @@ public class ReportController {
 
 	@GetMapping("/shift-report")
 	public ResponseEntity<byte[]> getShiftReport(@RequestParam Long hotelId,
-			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
-			@RequestParam LocalDate toDate) {
+	        @RequestParam(defaultValue = "pdf") String format,
+	        @RequestParam LocalDate fromDate,
+	        @RequestParam LocalDate toDate,
+	        @RequestParam(required = false) Long userId) {
 
-		try {
-			byte[] report = reportService.generateShiftReport(hotelId, format, fromDate, toDate);
+	    try {
+	        byte[] report = reportService.generateShiftReport(hotelId, format, fromDate, toDate, userId);
 
-			// Set response headers based on format
-			HttpHeaders headers = new HttpHeaders();
+	        HttpHeaders headers = new HttpHeaders();
 
-			if ("xlsx".equalsIgnoreCase(format)) {
-				headers.setContentType(
-						MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-				headers.setContentDispositionFormData("attachment", "shift_report.xlsx");
-			} else {
-				headers.setContentType(MediaType.APPLICATION_PDF);
-				headers.setContentDispositionFormData("attachment", "shift_report.pdf");
-			}
+	        if ("xlsx".equalsIgnoreCase(format)) {
+	            headers.setContentType(
+	                    MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	            headers.setContentDispositionFormData("attachment", "shift_report.xlsx");
+	        } else {
+	            headers.setContentType(MediaType.APPLICATION_PDF);
+	            headers.setContentDispositionFormData("attachment", "shift_report.pdf");
+	        }
 
-			return ResponseEntity.ok().headers(headers).body(report);
+	        return ResponseEntity.ok().headers(headers).body(report);
 
-		} catch (Exception e) {
-			return ResponseEntity.internalServerError().build();
-		}
+	    } catch (Exception e) {
+	        return ResponseEntity.internalServerError().build();
+	    }
 	}
-
 	@GetMapping("/monthly-collection-payment-type-report")
 	public ResponseEntity<byte[]> getMonthlyCollectionPaymentTypeReport(@RequestParam Long hotelId,
 			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
