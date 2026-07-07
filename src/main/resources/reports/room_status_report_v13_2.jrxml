@@ -298,7 +298,7 @@ ORDER BY  series.rn]]></query>
 			<text><![CDATA[Room]]></text>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="staticText" uuid="fb39a18e-ffc4-42a9-aae6-20f24ca070b3" x="50" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="fb39a18e-ffc4-42a9-aae6-20f24ca070b3" x="45" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Type]]></text>
 		</element>
 		<element kind="staticText" uuid="0c0f79dd-f8c0-45e4-a750-06eef5526f63" x="86" y="2" width="82" height="22" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
@@ -309,7 +309,7 @@ ORDER BY  series.rn]]></query>
 			<text><![CDATA[Room]]></text>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="staticText" uuid="e0220410-76fc-43ac-9a97-51b82cd4b111" x="133" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="e0220410-76fc-43ac-9a97-51b82cd4b111" x="128" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Type]]></text>
 		</element>
 		<element kind="staticText" uuid="bd5ff049-5329-4f3e-8b2e-b1779d8c74d8" x="175" y="2" width="82" height="22" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
@@ -331,14 +331,14 @@ ORDER BY  series.rn]]></query>
 			<text><![CDATA[Room]]></text>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="staticText" uuid="6a3da2d0-2fbe-46df-9aee-199498aea004" x="292" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="6a3da2d0-2fbe-46df-9aee-199498aea004" x="289" y="26" width="36" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Type]]></text>
 		</element>
 		<element kind="staticText" uuid="f374faa1-1d2e-43c6-9897-dbac90a85621" x="327" y="2" width="82" height="22" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[V/Clean]]></text>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="staticText" uuid="68d0181a-3ac4-4b09-a65f-5b3a0151ad8e" x="323" y="26" width="42" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="68d0181a-3ac4-4b09-a65f-5b3a0151ad8e" x="328" y="26" width="42" height="14" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Room]]></text>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
