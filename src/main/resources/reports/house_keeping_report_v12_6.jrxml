@@ -26,6 +26,9 @@
 	<parameter name="printedOn" class="java.lang.String">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
 	</parameter>
+	<parameter name="hotelPhone" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
 	<query language="SQL"><![CDATA[
 SELECT
     ROW_NUMBER() OVER (
@@ -78,7 +81,7 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 			<expression><![CDATA[$P{hotelName}]]></expression>
 		</element>
 		<element kind="textField" uuid="a9c89ec4-4b6f-4613-8fd5-148c8e374595" x="0" y="20" width="782" height="14" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true">
-			<expression><![CDATA[$P{hotelAddress}]]></expression>
+			<expression><![CDATA[$P{hotelAddress} +"   "+"Phone: " + $P{hotelPhone} ]]></expression>
 		</element>
 		<element kind="textField" uuid="a6927d89-6a7b-41a7-9aa2-3b230ce0c442" x="0" y="36" width="782" height="14" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true">
 			<expression><![CDATA["E-mail: " + ($P{hotelEmail} != null ? $P{hotelEmail} : "")]]></expression>

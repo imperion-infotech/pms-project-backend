@@ -247,7 +247,7 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 	<group name="GuestGroup">
 		<expression><![CDATA[$F{guest_name}]]></expression>
 	</group>
-	<pageHeader height="106">
+	<title height="70">
 		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000001" x="0" y="0" width="802" height="24" fontSize="16.0" bold="true" hTextAlign="Left">
 			<expression><![CDATA[$P{hotelName} == null ? "" : $P{hotelName}]]></expression>
 		</element>
@@ -261,7 +261,9 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
                 + (($P{hotelPhone} == null || $P{hotelPhone}.isEmpty()) ? "" : $P{hotelPhone})
             ]]></expression>
 		</element>
-		<element kind="textField" uuid="9d973c5e-c747-45af-a619-fef2b09d0fda" x="0" y="75" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+	</title>
+	<pageHeader height="18">
+		<element kind="textField" uuid="9d973c5e-c747-45af-a619-fef2b09d0fda" x="0" y="0" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
 			<expression><![CDATA["Shift Report for : " + $P{fromDate} + "  TO  " + $P{toDate}]]></expression>
 		</element>
 	</pageHeader>

@@ -239,13 +239,10 @@ ORDER BY
 			<element kind="line" uuid="24caaed1-9198-40c5-8e4e-9eb45a79bae5" x="477" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
 			<element kind="line" uuid="157e723a-aaf0-4010-b32b-913dd24859eb" x="616" y="-8" width="1" height="52" forecolor="#CCCCCC"/>
 			<element kind="line" uuid="4b9f5f42-4471-44bf-a224-6fa03e0b8a5b" x="696" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
-			<element kind="line" uuid="5e5f1643-97fa-4c7b-ba41-81967c6d305c" x="802" y="-16" width="1" height="58" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="5e5f1643-97fa-4c7b-ba41-81967c6d305c" x="802" y="-27" width="1" height="69" forecolor="#CCCCCC"/>
 		</band>
 	</detail>
 	<pageFooter height="20" splitType="Stretch">
-		<element kind="staticText" uuid="4db1948b-9b4a-4845-bbd2-6ca2e8a5009b" x="0" y="3" width="400" height="14" forecolor="#888888" fontName="DejaVu Sans" fontSize="11.0">
-			<text><![CDATA[Developed by Imperion Infotech | Property Management System]]></text>
-		</element>
 		<element kind="textField" uuid="53b0892e-b998-44ea-b3c8-55f2ea93f1ee" x="652" y="3" width="100" height="14" fontName="DejaVu Sans" fontSize="11.0" hTextAlign="Right">
 			<expression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></expression>
 		</element>

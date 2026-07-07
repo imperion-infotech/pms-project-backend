@@ -6,6 +6,7 @@ package com.pms.report.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -25,7 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.pms.auditlog.annotation.Auditable;
-import com.pms.booking.service.BookingServiceImpl;
 import com.pms.building.dao.BuildingsRepository;
 import com.pms.building.entity.Building;
 import com.pms.hotel.entity.Hotel;
@@ -162,12 +162,12 @@ public class ReportService {
         params.put("FLOOR_ID",
                 floorId != null ? floorId.toString() : null);
         
-   
+        Connection con = dataSource.getConnection();
         
         JasperPrint jasperPrint = JasperFillManager.fillReport(
             reportCompiler.getRoomStatusReport(),
             params,
-            dataSource.getConnection()
+            con
         );
 
         // export PDF or Excel...
@@ -324,7 +324,8 @@ public class ReportService {
         params.put("hotelName",    hotel.getHotelName());
         params.put("hotelAddress", hotel.getAddress());
         params.put("hotelEmail",   hotel.getEmail() != null ? hotel.getEmail() : "");
-
+        params.put("hotelPhone", hotel.getContactNumber());
+        
         // Print info
         params.put("printedBy",    username);
         params.put("printedOn",    new SimpleDateFormat("MM/dd/yyyy hh:mm a")
