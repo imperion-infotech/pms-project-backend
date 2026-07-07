@@ -72,12 +72,11 @@ public class ReportController {
 	public ResponseEntity<byte[]> getRoomStatusReport(@RequestParam Long hotelId,
 			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
 			@RequestParam LocalDate toDate, @RequestParam(defaultValue = "") Long buildingId,
-			@RequestParam(defaultValue = "") Long floorId, @RequestParam(defaultValue = "") String buildingName,
-			@RequestParam(defaultValue = "") String floorName) {
+			@RequestParam(defaultValue = "") Long floorId) {
 
 		try {
 			byte[] report = reportService.generateRoomStatusReport(hotelId, format, fromDate, toDate, buildingId,
-					floorId, buildingName, floorName);
+					floorId);
 
 			// Set response headers based on format
 			HttpHeaders headers = new HttpHeaders();
@@ -103,8 +102,8 @@ public class ReportController {
 
 	@GetMapping("/dailycollection-report")
 	public ResponseEntity<byte[]> getDailyCollectionReport(@RequestParam Long hotelId,
-			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDateTime fromDate,
-			@RequestParam LocalDateTime toDate) {
+			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
+			@RequestParam LocalDate toDate) {
 
 		try {
 			byte[] report = reportService.generateDailyCollectionReport(hotelId, format, fromDate, toDate);

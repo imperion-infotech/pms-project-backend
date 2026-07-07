@@ -126,7 +126,7 @@ public class ReportService {
     
     @Auditable(action = "CREATE", entity = "ROOMSTATUSREPORT")    
 //    @Async
-    public byte[] generateRoomStatusReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,Long buildingId,Long floorId,String buildingName,String floorName) 
+    public byte[] generateRoomStatusReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,Long buildingId,Long floorId) 
     		throws Exception {
 
         // Fetch hotel details from DB
@@ -162,8 +162,7 @@ public class ReportService {
         params.put("FLOOR_ID",
                 floorId != null ? floorId.toString() : null);
         
-        params.put("BUILDING_NAME",buildingName );
-        params.put("FLOOR_NAME",floorName );
+   
         
         JasperPrint jasperPrint = JasperFillManager.fillReport(
             reportCompiler.getRoomStatusReport(),
@@ -187,7 +186,7 @@ public class ReportService {
     
  
     @Auditable(action = "CREATE", entity = "DAILYCOLLECTIONREPORT")
-    public byte[] generateDailyCollectionReport(Long hotelId, String format, LocalDateTime fromDate, LocalDateTime toDate) {
+    public byte[] generateDailyCollectionReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate) {
     	   // Fetch hotel details from DB
         Hotel hotel = hotelRepository.findById(hotelId)
                         .orElseThrow(() -> new RuntimeException("Hotel not found"));
@@ -209,8 +208,8 @@ public class ReportService {
         params.put("PRINTED_BY",    username);
         params.put("REPORT_DATE",
             new SimpleDateFormat("M/d/yyyy").format(new Date()));
-        params.put("FROM_DATE", java.sql.Timestamp.valueOf(fromDate));
-        params.put("TO_DATE", java.sql.Timestamp.valueOf(toDate));
+        params.put("FROM_DATE", java.sql.Date.valueOf(fromDate));
+        params.put("TO_DATE", java.sql.Date.valueOf(toDate));
         JasperPrint jasperPrint = null;
         try {
              jasperPrint = JasperFillManager.fillReport(

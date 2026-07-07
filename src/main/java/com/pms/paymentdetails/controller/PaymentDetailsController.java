@@ -108,6 +108,7 @@ public class PaymentDetailsController {
 
 			// Update fields
 			existingPaymentDetails.setAmount(paymentDetails.getAmount());
+			existingPaymentDetails.setTotalAmount(paymentDetails.getTotalAmount());
 			existingPaymentDetails.setAuthorizationNo(paymentDetails.getAuthorizationNo());
 			existingPaymentDetails.setCardNo(paymentDetails.getCardNo());
 			existingPaymentDetails.setCurrencySymbol(paymentDetails.getCurrencySymbol());
@@ -121,6 +122,8 @@ public class PaymentDetailsController {
 			existingPaymentDetails.setRefundType(paymentDetails.getRefundType());
 			existingPaymentDetails.setRefundAccountNo(paymentDetails.getRefundAccountNo());
 			existingPaymentDetails.setTransactionId(paymentDetails.getTransactionId());
+			existingPaymentDetails.setIsActive(paymentDetails.getIsActive());
+			existingPaymentDetails.setIsDeleted(paymentDetails.getIsDeleted());
 
 			PaymentDetails updatedPaymentDetails = service.updatePaymentDetails(existingPaymentDetails.getId(),
 					existingPaymentDetails);
