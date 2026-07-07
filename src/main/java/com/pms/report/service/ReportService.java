@@ -162,13 +162,23 @@ public class ReportService {
         params.put("FLOOR_ID",
                 floorId != null ? floorId.toString() : null);
         
-        Connection con = dataSource.getConnection();
+        Connection con = null;
+        JasperPrint jasperPrint =null;
+        try {
+        	con = dataSource.getConnection();
         
-        JasperPrint jasperPrint = JasperFillManager.fillReport(
+         jasperPrint = JasperFillManager.fillReport(
             reportCompiler.getRoomStatusReport(),
             params,
             con
         );
+        }catch(Exception e) {
+        	 logger.error("Exception in database connection pool"+e.getMessage());
+        	 e.printStackTrace();
+        }
+        finally {
+        	con.close();
+        }
 
         // export PDF or Excel...
      // Export
@@ -211,11 +221,14 @@ public class ReportService {
         params.put("FROM_DATE", java.sql.Date.valueOf(fromDate));
         params.put("TO_DATE", java.sql.Date.valueOf(toDate));
         JasperPrint jasperPrint = null;
+        Connection con = null;
+
         try {
-             jasperPrint = JasperFillManager.fillReport(
+        	con = dataSource.getConnection();
+        	jasperPrint = JasperFillManager.fillReport(
                     reportCompiler.getDailyCollectionReport(),
                     params,
-                    dataSource.getConnection()
+                    con
             );
 
        
@@ -237,7 +250,16 @@ public class ReportService {
         	logger.info("Exception in e::"+e.getMessage());
             throw new RuntimeException("Error generating Daily Collection Report", e);
         }
-    }
+        finally {
+        	try {
+        	con.close();
+        	}
+        	catch(Exception e)
+        	{e.getMessage();
+        	}
+        	}
+        }
+    
     
     @Auditable(action = "CREATE", entity = "GUESTLISTREPORT")
     public byte[] generateGuestListReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,String guestStatus) {
@@ -274,12 +296,15 @@ public class ReportService {
      }
      
      JasperPrint jasperPrint = null;
+     Connection con = null;
      try {
+    	 con = dataSource.getConnection();
           jasperPrint = JasperFillManager.fillReport(
                  reportCompiler.getGuestListReport(),
                  params,
-                 dataSource.getConnection()
+                 con
          );
+     
 
     
 
@@ -299,6 +324,15 @@ public class ReportService {
      } catch (JRException | SQLException e) {
     	 logger.info("Exception in e::"+e.getMessage());
          throw new RuntimeException("Error generating Guest List Report", e);
+     }
+     finally {
+    	 try {
+    	 con.close();
+    	 } 
+    	 catch(Exception e) {
+    		 logger.error("Exception in con close ::"+e.getMessage());
+    	 }
+    	 
      }
  }
     
@@ -330,13 +364,30 @@ public class ReportService {
         params.put("printedBy",    username);
         params.put("printedOn",    new SimpleDateFormat("MM/dd/yyyy hh:mm a")
                                        .format(new Date()));
+        JasperPrint jasperPrint = null;
+        Connection con=null;
         
-        JasperPrint jasperPrint = JasperFillManager.fillReport(
+        try {
+        	con = dataSource.getConnection();
+        jasperPrint = JasperFillManager.fillReport(
             reportCompiler.getHouseKeepingReport(),
             params,
-            dataSource.getConnection()
+           con
         );
-
+        }
+        catch(Exception e) {
+        	
+        	 logger.error("Exception ::"+e.getMessage());
+        }
+        finally {
+          	 try {
+          	 con.close();
+          	 } 
+          	 catch(Exception e) {
+          		 logger.error("Exception in con close ::"+e.getMessage());
+          	 }
+          	 
+           }
         // export PDF or Excel...
      // Export
         if ("xlsx".equalsIgnoreCase(format)) {
@@ -349,6 +400,9 @@ public class ReportService {
         } else {
             return JasperExportManager.exportReportToPdf(jasperPrint);
         }
+        
+      
+        
     }
     
     @Auditable(action = "CREATE", entity = "SHIFTREPORT")
@@ -378,11 +432,14 @@ public class ReportService {
         params.put("userId", userId); // null → all users; a real ID → that user only
 
         JasperPrint jasperPrint = null;
+        Connection con=null;
+        
         try {
+        	con = dataSource.getConnection();
             jasperPrint = JasperFillManager.fillReport(
                     reportCompiler.getShiftReport(),
                     params,
-                    dataSource.getConnection()
+                    con
             );
 
             if ("xlsx".equalsIgnoreCase(format)) {
@@ -400,7 +457,15 @@ public class ReportService {
             logger.error("Error generating Shift Report", e);
             e.printStackTrace();
             throw new RuntimeException("Error generating Shift Report", e);
-        }
+        } finally {
+         	 try {
+         	 con.close();
+         	 } 
+         	 catch(Exception e) {
+         		 logger.error("Exception in con close ::"+e.getMessage());
+         	 }
+         	 
+          }
     }
     
     
@@ -434,11 +499,13 @@ public class ReportService {
        
        
        JasperPrint jasperPrint = null;
+       Connection con = null;
        try {
+    	   con = dataSource.getConnection();
             jasperPrint = JasperFillManager.fillReport(
                    reportCompiler.getMonthlyCollectionPaymentTypeReport(),
-                   params,
-                   dataSource.getConnection()
+                   params,con
+                  
            );
        // export PDF or Excel...
     // Export
@@ -458,6 +525,15 @@ public class ReportService {
      	  e.printStackTrace();
            throw new RuntimeException("Error generating Monthly Collection Payment Type Report", e);
        }
+       finally {
+       	 try {
+       	 con.close();
+       	 } 
+       	 catch(Exception e) {
+       		 logger.error("Exception in con close ::"+e.getMessage());
+       	 }
+       	 
+        }
  }
     
 }
