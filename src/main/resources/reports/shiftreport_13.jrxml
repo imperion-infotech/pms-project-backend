@@ -155,8 +155,8 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000002" x="0" y="21" width="400" height="18" fontSize="11.0">
 					<expression><![CDATA["Login: " + ($F{login_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{login_time}))]]></expression>
 				</element>
-				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="255" y="21" width="402" height="18" fontSize="11.0">
-					<expression><![CDATA["Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="189" y="21" width="402" height="18" fontSize="11.0">
+					<expression><![CDATA["|               Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
 				</element>
 			</band>
 		</groupHeader>
