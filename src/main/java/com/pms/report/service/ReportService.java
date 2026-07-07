@@ -234,6 +234,7 @@ public class ReportService {
         }
         
         } catch (JRException | SQLException e) {
+        	logger.info("Exception in e::"+e.getMessage());
             throw new RuntimeException("Error generating Daily Collection Report", e);
         }
     }
@@ -296,6 +297,7 @@ public class ReportService {
      }
      
      } catch (JRException | SQLException e) {
+    	 logger.info("Exception in e::"+e.getMessage());
          throw new RuntimeException("Error generating Guest List Report", e);
      }
  }

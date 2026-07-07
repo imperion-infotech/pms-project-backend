@@ -6,6 +6,8 @@ package com.pms.report.controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * 
  */
@@ -18,11 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pms.building.controller.BuildingController;
 import com.pms.report.service.ReportService;
 
 @RestController
 @RequestMapping("/reports")
 public class ReportController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
+	
 
 	@Autowired
 	private ReportService reportService;
@@ -123,6 +129,8 @@ public class ReportController {
 			return ResponseEntity.ok().headers(headers).body(report);
 
 		} catch (Exception e) {
+			logger.info("Exception in e::"+e.getMessage());
+			e.printStackTrace();
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -150,6 +158,8 @@ public class ReportController {
 			return ResponseEntity.ok().headers(headers).body(report);
 
 		} catch (Exception e) {
+			logger.info("Exception in e::"+e.getMessage());
+			e.printStackTrace();
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -179,6 +189,8 @@ public class ReportController {
 			return ResponseEntity.ok().headers(headers).body(report);
 
 		} catch (Exception e) {
+			logger.info("Exception in e::"+e.getMessage());
+			e.printStackTrace();
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -207,6 +219,7 @@ public class ReportController {
 	        return ResponseEntity.ok().headers(headers).body(report);
 
 	    } catch (Exception e) {
+	    	e.printStackTrace();
 	        return ResponseEntity.internalServerError().build();
 	    }
 	}
