@@ -164,7 +164,7 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<band height="28">
 				<element kind="line" uuid="1a2b3c4d-0001-4001-8001-000000000004" x="0" y="0" width="802" height="1"/>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000005" x="424" y="4" width="144" height="20" fontSize="11.0" bold="true">
-					<expression><![CDATA["Subtotal"]]></expression>
+					<expression><![CDATA[" Subtotal"]]></expression>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="471" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
 					<expression><![CDATA[$V{userGroupCash}]]></expression>
@@ -305,13 +305,13 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000018" x="801" y="0" width="1" height="21"/>
 		</band>
 	</detail>
-	<pageFooter height="18">
+	<pageFooter height="49">
 		<element kind="textField" uuid="1a2b3c4d-0006-4006-8006-000000000001" x="700" y="0" width="102" height="16" fontSize="11.0" hTextAlign="Right">
 			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
 		</element>
 	</pageFooter>
-	<summary height="110">
-		<element kind="line" uuid="1a2b3c4d-0007-4007-8007-000000000001" x="550" y="0" width="252" height="1"/>
+	<summary height="125">
+		<element kind="line" uuid="1a2b3c4d-0007-4007-8007-000000000001" x="550" y="6" width="252" height="1"/>
 		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000012" x="0" y="64" width="300" height="20" fontSize="11.0" bold="true">
 			<expression><![CDATA["Printed By: " + (($P{printedBy} == null || $P{printedBy}.isEmpty()) ? "-" : $P{printedBy})]]></expression>
 		</element>

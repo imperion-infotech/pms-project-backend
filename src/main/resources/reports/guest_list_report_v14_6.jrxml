@@ -196,7 +196,7 @@ ORDER BY
 		<element kind="line" uuid="634433be-433c-493f-a937-1bc515194089" x="0" y="93" width="802" height="1" forecolor="#AAAAAA"/>
 	</title>
 	<detail>
-		<band height="54" splitType="Stretch">
+		<band height="48" splitType="Stretch">
 			<element kind="textField" uuid="867fc629-8988-4a32-918e-1bf45eadf5e7" x="2" y="8" width="43" height="18" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true" hTextAlign="Center">
 				<expression><![CDATA[$F{room}]]></expression>
 				<box leftPadding="2"/>
