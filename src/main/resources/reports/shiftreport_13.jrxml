@@ -155,7 +155,7 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000002" x="0" y="21" width="400" height="18" fontSize="11.0">
 					<expression><![CDATA["Login: " + ($F{login_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{login_time}))]]></expression>
 				</element>
-				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="400" y="21" width="402" height="18" fontSize="11.0">
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="255" y="21" width="402" height="18" fontSize="11.0">
 					<expression><![CDATA["Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
 				</element>
 			</band>
@@ -163,10 +163,10 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 		<groupFooter>
 			<band height="28">
 				<element kind="line" uuid="1a2b3c4d-0001-4001-8001-000000000004" x="0" y="0" width="802" height="1"/>
-				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000005" x="0" y="4" width="300" height="20" fontSize="11.0" bold="true">
-					<expression><![CDATA["Subtotal for " + $F{user_name}]]></expression>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000005" x="424" y="4" width="144" height="20" fontSize="11.0" bold="true">
+					<expression><![CDATA["Subtotal"]]></expression>
 				</element>
-				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="472" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="471" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
 					<expression><![CDATA[$V{userGroupCash}]]></expression>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000007" x="577" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
@@ -288,8 +288,12 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000008" x="682" y="0" width="120" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
 				<expression><![CDATA[$F{bank_amt}]]></expression>
 			</element>
-			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000009" x="0" y="20" width="802" height="1"/>
-			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000019" x="0" y="0" width="802" height="1"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000009" x="0" y="20" width="802" height="1">
+				<pen lineColor="#A69F9F"/>
+			</element>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000019" x="0" y="0" width="802" height="1">
+				<pen lineColor="#ADA7A6"/>
+			</element>
 			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000010" x="0" y="0" width="1" height="21"/>
 			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000011" x="130" y="0" width="1" height="21"/>
 			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000012" x="190" y="0" width="1" height="21"/>
