@@ -45,17 +45,17 @@
         ELSE pt.payment_type_name
     END                                                 AS payment_display,
     pd.amount                                           AS amount,
-    CASE
-        WHEN pd.payment_details_type = 'AUTHORIZED'          THEN '^'
-        WHEN pd.payment_details_type = 'DELETED'             THEN '^^'
-        WHEN pd.payment_details_type = 'ACCOUNT'             THEN '*'
-        WHEN pd.payment_details_type = 'BUSINESS_COMMISSION' THEN '**'
-        WHEN pd.payment_details_type = 'GROUP_AUTHORIZED'    THEN '*^'
-        WHEN pd.payment_details_type = 'GROUP'               THEN '~'
-        WHEN pd.payment_details_type = 'GROUP_DELETED'       THEN '~~'
-        WHEN pd.payment_details_type = 'DEPOSIT'             THEN '!'
-        ELSE ''
-    END                                                 AS payment_flag,
+   -- CASE
+   --     WHEN pd.payment_details_type = 'AUTHORIZED'          THEN '^'
+    --    WHEN pd.payment_details_type = 'DELETED'             THEN '^^'
+     --   WHEN pd.payment_details_type = 'ACCOUNT'             THEN '*'
+     --   WHEN pd.payment_details_type = 'BUSINESS_COMMISSION' THEN '**'
+    --    WHEN pd.payment_details_type = 'GROUP_AUTHORIZED'    THEN '*^'
+     --   WHEN pd.payment_details_type = 'GROUP'               THEN '~'
+   --     WHEN pd.payment_details_type = 'GROUP_DELETED'       THEN '~~'
+   --     WHEN pd.payment_details_type = 'DEPOSIT'             THEN '!'
+---ELSE ''
+  --  END                                                 AS payment_flag,
     CASE
         WHEN pt.payment_type_name = 'Cash'  THEN 'Cash'
         WHEN pt.payment_type_name = 'Cheque' THEN 'Check'
@@ -126,7 +126,6 @@ ORDER BY
 	<field name="payment_type" class="java.lang.String"/>
 	<field name="payment_display" class="java.lang.String"/>
 	<field name="amount" class="java.lang.Double"/>
-	<field name="payment_flag" class="java.lang.String"/>
 	<field name="payment_category" class="java.lang.String"/>
 	<field name="card_type" class="java.lang.String"/>
 	<variable name="V_TOTAL" calculation="Sum" class="java.lang.Double">
