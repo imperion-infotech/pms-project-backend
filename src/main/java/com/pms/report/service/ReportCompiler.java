@@ -47,10 +47,10 @@ public class ReportCompiler {
                 new ClassPathResource("reports/daily_collection_v20.jasper");
         
         ClassPathResource guestListResource =
-                new ClassPathResource("reports/guest_list_report_v14_5.jasper");
+                new ClassPathResource("reports/guest_list_report_v14_6.jasper");
         
         ClassPathResource houseKeepingResource =
-                new ClassPathResource("reports/house_keeping_report_v12_4.jasper");
+                new ClassPathResource("reports/house_keeping_report_v12_5.jasper");
         
         ClassPathResource shiftReportResource =
                 new ClassPathResource("reports/shiftreport_13.jasper");
