@@ -30,6 +30,7 @@ import com.pms.security.repository.RoomRepository;
 import com.pms.security.service.BaseHotelService;
 import com.pms.stay.entity.RateTypeEnum;
 import com.pms.stay.entity.StayDetails;
+import com.pms.stay.entity.StayStatusEnum;
 import com.pms.stay.service.IStayDetailsService;
 import com.pms.tax.service.IGuestTaxTransactionService;
 
@@ -116,6 +117,7 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        stayDetails.setPersonalDetailsId(createdPdetails.getId());
 	        stayDetails.setRoomTypeId(req.getRoomTypeId());
 	        stayDetails.setRateTypeEnum(RateTypeEnum.RACK);
+	        stayDetails.setStayStatusEnum(StayStatusEnum.Confirmed);
 	        stayDetails.setCreatedBy(userId);
 	        stayDetails.setHotelId(hotelId);
 	        stayDetails.setNoOfGuest(0);
