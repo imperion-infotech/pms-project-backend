@@ -418,14 +418,15 @@ public class ReportService {
                             .getAuthentication().getName();
 
         Map<String, Object> params = new HashMap<>();
+        params.put("hotelId",      hotelId);
         params.put("hotelName",    hotel.getHotelName());
         params.put("hotelAddress", hotel.getAddress());
         params.put("hotelEmail",   hotel.getEmail() != null ? hotel.getEmail() : "");
         params.put("hotelPhone", hotel.getContactNumber());
-       // params.put("hotelCity",    hotel.getCity());
-       // params.put("hotelState",   hotel.getState());
-        //params.put("hotelCountry", hotel.getCountry());
-       // params.put("hotelZipcode", hotel.getZipCode());
+        params.put("hotelCity",    hotel.getCity());
+        params.put("hotelState",   hotel.getState());
+        params.put("hotelCountry", hotel.getCountry());
+        params.put("hotelZipcode", hotel.getZipCode());
         params.put("printedBy",    username);
         params.put("printedOn",
             LocalDateTime.now()
