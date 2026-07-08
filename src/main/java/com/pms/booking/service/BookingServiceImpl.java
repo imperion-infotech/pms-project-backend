@@ -74,7 +74,8 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 
 //	        RoomMaster roomMaster = roomRepo.findFirstByRoomStatus_RoomStatusName("AVAILABLE");
 //	        roomMaster.setRoomStatus("BOOKED");
-	    	
+	    	GuestDetails createdGuestDetails = null;
+	    	try {
 	    	Long hotelId = HotelContext.getHotelId();
 			if (hotelId == null) {
 				throw new ResourceNotFoundException("Hotel not selected");
@@ -127,7 +128,7 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        gDetails.setCheckOutDate(req.getCheckOut());
 	        gDetails.setHotelId(hotelId);
 	        gDetails.setCreatedBy(userId);
-	        GuestDetails createdGuestDetails =  guestDetailsService.createGuestDetail(gDetails);
+	        createdGuestDetails =  guestDetailsService.createGuestDetail(gDetails);
 	        
 	        RentDetails rentDetails = new RentDetails();
 	        rentDetails.setPersonalDetailsId(pDetails.getId());
@@ -156,7 +157,11 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        
 
 	        bookingHistoryRepository.save(history);
-	        
+	    	}
+	    	catch(Exception e) {
+	    		
+	    		logger.error("Exception in create Booking api"+e.getMessage());
+	    	}
 	        
 	        return createdGuestDetails.getId();
 	    }
