@@ -9,6 +9,7 @@ import com.pms.hotel.entity.Hotel;
 import com.pms.hotel.entity.HotelRequestDTO;
 import com.pms.hotel.entity.HotelResponseDTO;
 import com.pms.hotel.entity.HotelUpdateRequestDTO;
+import com.pms.hotel.entity.PropertyByIdDto;
 
 /**
  * 
@@ -21,6 +22,8 @@ public interface IHotelService {
 	HotelResponseDTO getHotel(Long hotelId) ;
 	String deleteHotel(Long hotelId);
 	Hotel getHotelById(Long id);
-	public List<Hotel> search(String hotelName, String url,String address,String city, String state, String country , String email ,String status);
+    List<Hotel> search(String hotelName, String url,String address,String city, String state, String country , String email ,String status);
+	
+	PropertyByIdDto getPropertyById(Long id);
 
 }

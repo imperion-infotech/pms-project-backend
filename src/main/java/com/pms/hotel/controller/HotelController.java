@@ -18,17 +18,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pms.auditlog.util.AuditUtil;
 import com.pms.hotel.entity.Hotel;
 import com.pms.hotel.entity.HotelRequestDTO;
 import com.pms.hotel.entity.HotelResponseDTO;
 import com.pms.hotel.entity.HotelUpdateRequestDTO;
+import com.pms.hotel.entity.PropertyByIdDto;
 import com.pms.hotel.service.IHotelService;
-import com.pms.personaldetails.PersonalDetails;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -136,6 +134,11 @@ public class HotelController {
 	{
 
         return service.search(hotelName,url, email, address, state,country,email,status);
+    }
+    
+    @GetMapping("/user/protpertyById/{id}")
+    public ResponseEntity<PropertyByIdDto> getPropertyById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getPropertyById(id));
     }
 	
 	

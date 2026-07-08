@@ -1,0 +1,279 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="guest_list_report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f1ca02e3-75a8-4d09-bacb-b817b62fd6c0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="HOTEL_ID" class="java.lang.Long">
+		<defaultValueExpression><![CDATA[13L]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_NAME" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Hotel"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_ADDRESS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_PHONE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_FAX" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_CITY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_STATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_ZIPCODE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_COUNTRY" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="HOTEL_EMAIL" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRINTED_BY" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Admin"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PRINTED_DATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[new java.text.SimpleDateFormat("M/d/yyyy hh:mm a").format(new java.util.Date())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FROM_DATE" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[new java.sql.Date(System.currentTimeMillis())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TO_DATE" class="java.sql.Date">
+		<defaultValueExpression><![CDATA[new java.sql.Date(System.currentTimeMillis())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="GUEST_STATUS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+	</parameter>
+	<query language="SQL"><![CDATA[
+            SELECT *
+FROM (
+    SELECT DISTINCT ON (gd.guest_details_id)
+        rm.room_name                                AS room,
+        CONCAT(per.first_name, ' ', per.last_name) AS guest_name,
+        per.address                                AS address,
+        per.phone                                  AS phone,
+        gd.check_in_date::date                     AS check_in_date,
+        gd.check_out_date::date                    AS check_out_date,
+        gd.guest_details_status                    AS guest_status,
+
+        COALESCE(dt.document_type_name, '')        AS doc_type,
+        COALESCE(dd.document_number, '')           AS doc_number,
+
+        CASE
+            WHEN dd.document_number IS NOT NULL
+             AND dt.document_type_name IS NOT NULL
+--            THEN UPPER(dt.document_type_name) || ' : ' || dd.document_number
+             THEN  dd.document_number
+            ELSE '--N/A--'
+        END                                        AS id_info,
+
+        per.birth_date::date                       AS birth_date,
+        per.nationality                            AS nationality,
+
+        CASE
+            WHEN gd.guest_details_status = 'Check-In'    THEN 1
+            WHEN gd.guest_details_status = 'Reservation' THEN 2
+            WHEN gd.guest_details_status = 'Cancelled'   THEN 3
+            WHEN gd.guest_details_status = 'Check-Out'   THEN 4
+            ELSE 5
+        END                                        AS status_sort
+
+    FROM guest_details gd
+
+    JOIN personal_details per
+        ON gd.personal_details_id = per.id
+
+    LEFT JOIN room_master rm
+        ON gd.room_master_id = rm.id
+
+    LEFT JOIN document_details dd
+        ON dd.personal_details_id = gd.personal_details_id
+       AND (dd.is_deleted = false OR dd.is_deleted IS NULL)
+       AND (dd.is_active = true OR dd.is_active IS NULL)
+
+    LEFT JOIN document_type dt
+        ON dd.document_type_id = dt.id
+       AND UPPER(dt.document_type_name) NOT LIKE '%CREDIT%'
+       AND UPPER(dt.document_type_name) NOT LIKE '%DEBIT%'
+
+    WHERE gd.hotel_id = $P{HOTEL_ID}
+      AND gd.check_in_date::date BETWEEN $P{FROM_DATE} AND $P{TO_DATE}
+      AND (gd.is_deleted = false OR gd.is_deleted IS NULL)
+      AND (gd.is_active = true OR gd.is_active IS NULL)
+      AND (per.is_deleted = false OR per.is_deleted IS NULL)
+      AND gd.guest_details_status IN ('Check-In', 'Reservation')
+ AND ($P{GUEST_STATUS} IS NULL OR $P{GUEST_STATUS} = 'ALL' OR gd.guest_details_status = $P{GUEST_STATUS})
+    ORDER BY
+        gd.guest_details_id,
+        status_sort,
+        rm.room_name
+) sub
+ORDER BY
+    status_sort,
+    room;]]></query>
+	<field name="room" class="java.lang.String"/>
+	<field name="guest_name" class="java.lang.String"/>
+	<field name="address" class="java.lang.String"/>
+	<field name="phone" class="java.lang.String"/>
+	<field name="check_in_date" class="java.sql.Date"/>
+	<field name="check_out_date" class="java.sql.Date"/>
+	<field name="guest_status" class="java.lang.String"/>
+	<field name="doc_type" class="java.lang.String"/>
+	<field name="doc_number" class="java.lang.String"/>
+	<field name="id_info" class="java.lang.String"/>
+	<field name="birth_date" class="java.sql.Date"/>
+	<field name="nationality" class="java.lang.String"/>
+	<field name="status_sort" class="java.lang.Integer"/>
+	<variable name="V_TOTAL_GUESTS" calculation="Count" class="java.lang.Integer">
+		<expression><![CDATA[$F{guest_name}]]></expression>
+	</variable>
+	<group name="status_group">
+		<expression><![CDATA[$F{status_sort}]]></expression>
+		<groupHeader>
+			<band height="45" splitType="Stretch">
+				<element kind="textField" uuid="aabb1122-0000-0000-0000-000000000002" x="4" y="1" width="798" height="14" forecolor="#000000" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+					<expression><![CDATA[
+                        "Check-In".equals($F{guest_status})    ? "Check-In" :
+                        "Reservation".equals($F{guest_status}) ? "Reservation" :
+                        "Cancelled".equals($F{guest_status})   ? "Cancelled" :
+                        "Check-Out".equals($F{guest_status})   ? "Check-Out" :
+                        ($F{guest_status} != null ? $F{guest_status} : "Other")
+                    ]]></expression>
+				</element>
+				<element kind="staticText" uuid="b1000002-0000-4000-8000-000000000002" x="2" y="21" width="43" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Room]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000003-0000-4000-8000-000000000003" x="47" y="21" width="128" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Guest Name]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000004-0000-4000-8000-000000000004" x="177" y="21" width="148" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Address]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000005-0000-4000-8000-000000000005" x="327" y="21" width="73" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Check-In]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000006-0000-4000-8000-000000000006" x="402" y="21" width="73" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Check-Out]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000007-0000-4000-8000-000000000007" x="477" y="21" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Birth Date]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000008-0000-4000-8000-000000000008" x="547" y="21" width="77" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Nationality]]></text>
+				</element>
+				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000018" x="628" y="21" width="67" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Doc Type]]></text>
+				</element>
+				<element kind="line" uuid="b1000016-0000-4000-8000-000000000019" x="697" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000009" x="697" y="21" width="105" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[ID Info]]></text>
+				</element>
+				<element kind="line" uuid="b1000010-0000-4000-8000-000000000010" x="45" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000011-0000-4000-8000-000000000011" x="175" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000012-0000-4000-8000-000000000012" x="325" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000013-0000-4000-8000-000000000013" x="400" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000014-0000-4000-8000-000000000014" x="476" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000015-0000-4000-8000-000000000015" x="545" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000016-0000-4000-8000-000000000016" x="624" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000017-0000-4000-8000-000000000017" x="0" y="39" width="802" height="1" forecolor="#000000"/>
+				<element kind="line" uuid="22053bb0-1599-477e-b878-fcddc05080e0" x="1" y="19" width="802" height="1" forecolor="#000000"/>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background splitType="Stretch"/>
+	<title height="105" splitType="Stretch">
+		<element kind="textField" uuid="d8239a84-4969-4dd0-b306-65f8402d8a01" x="0" y="0" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+			<expression><![CDATA[$P{HOTEL_NAME}]]></expression>
+		</element>
+		<element kind="textField" uuid="81f9c143-96e5-4e56-ba99-b3c798b2f757" x="0" y="36" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" vTextAlign="Middle">
+			<expression><![CDATA["Phone: " + $P{HOTEL_PHONE} ]]></expression>
+		</element>
+		<element kind="textField" uuid="e8ab7ecb-ea00-4d6e-a849-cb7867c56449" x="0" y="54" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" vTextAlign="Middle">
+			<expression><![CDATA["E-mail: " + $P{HOTEL_EMAIL}]]></expression>
+		</element>
+		<element kind="line" uuid="a1a7ae00-9259-49ad-bfed-9e3546d299b2" x="0" y="72" width="802" height="1" forecolor="#AAAAAA"/>
+		<element kind="textField" uuid="92532212-8417-4c64-9d0f-5842dca12cbc" x="0" y="75" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+			<expression><![CDATA["Guest List Report for : " + $P{FROM_DATE} + "  TO  " + $P{TO_DATE}
+                + "   |   Status : " + ($P{GUEST_STATUS} == null || "ALL".equals($P{GUEST_STATUS}) ? "All" : $P{GUEST_STATUS})]]></expression>
+		</element>
+		<element kind="line" uuid="634433be-433c-493f-a937-1bc515194089" x="0" y="93" width="802" height="1" forecolor="#AAAAAA"/>
+		<element kind="textField" uuid="5609f80f-3432-4b42-b19c-7507569ac14e" x="0" y="22" width="555" height="14" fontName="DejaVu Sans" fontSize="11.0">
+			<expression><![CDATA[java.util.stream.Stream.of($P{HOTEL_ADDRESS}, $P{HOTEL_CITY}, $P{HOTEL_STATE}, $P{HOTEL_ZIPCODE}, $P{HOTEL_COUNTRY})
+                .filter(s -> s != null && !s.trim().isEmpty())
+                .collect(java.util.stream.Collectors.joining(", "))]]></expression>
+		</element>
+	</title>
+	<detail>
+		<band height="48" splitType="Stretch">
+			<element kind="textField" uuid="867fc629-8988-4a32-918e-1bf45eadf5e7" x="2" y="8" width="43" height="18" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{room}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="textField" uuid="671d825f-af13-4186-bf86-d34756ed6650" x="47" y="8" width="128" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{guest_name}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="textField" uuid="952a669d-7a4f-40ab-8078-73fe4253b5b2" x="177" y="8" width="148" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{address}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="textField" uuid="a1b2c3d4-0001-4000-8000-000000000003" x="327" y="8" width="73" height="18" fontName="DejaVu Sans" fontSize="11.0" pattern="MM/dd/yyyy" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{check_in_date}]]></expression>
+			</element>
+			<element kind="textField" uuid="a1b2c3d4-0001-4000-8000-000000000004" x="402" y="8" width="73" height="18" fontName="DejaVu Sans" fontSize="11.0" pattern="MM/dd/yyyy" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{check_out_date}]]></expression>
+			</element>
+			<element kind="textField" uuid="0a68f5e1-6827-494b-932c-5488feef7ff8" x="477" y="8" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" pattern="MM/dd/yyyy" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{birth_date}]]></expression>
+			</element>
+			<element kind="textField" uuid="d1495176-ecdf-4727-b0f1-2024c92a2dba" x="547" y="8" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{nationality}]]></expression>
+			</element>
+			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347c" x="630" y="8" width="67" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{doc_type}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347b" x="697" y="8" width="105" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
+				<expression><![CDATA[$F{id_info}]]></expression>
+				<box leftPadding="2"/>
+			</element>
+			<element kind="line" uuid="a1b2c3d4-0001-4000-8000-000000000007" x="325" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="4cb937fd-1c99-4ecf-96a7-f1bf5102a16d" x="-1" y="46" width="802" height="1" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="4a79d527-d8ca-42c9-a0ac-10c32c37f825" x="-1" y="-24" width="1" height="70" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="bb0aa4df-85ed-40ea-a8ec-78f2f81fdb53" x="45" y="-8" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="5b8f69f2-f0bc-463f-91a0-92a245d74d52" x="175" y="-11" width="1" height="56" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="c5af9daa-d9b1-4ac0-85ae-4dfb95e5064c" x="400" y="-12" width="1" height="56" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="68862340-2389-461b-baf1-f5a57e73ab90" x="545" y="-11" width="1" height="56" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="24caaed1-9198-40c5-8e4e-9eb45a79bae5" x="476" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="157e723a-aaf0-4010-b32b-913dd24859eb" x="624" y="-8" width="1" height="52" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="4b9f5f42-4471-44bf-a224-6fa03e0b8a5b" x="697" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="5e5f1643-97fa-4c7b-ba41-81967c6d305c" x="802" y="-27" width="1" height="69" forecolor="#CCCCCC"/>
+		</band>
+	</detail>
+	<pageFooter height="20" splitType="Stretch">
+		<element kind="textField" uuid="53b0892e-b998-44ea-b3c8-55f2ea93f1ee" x="652" y="3" width="100" height="14" fontName="DejaVu Sans" fontSize="11.0" hTextAlign="Right">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></expression>
+		</element>
+		<element kind="textField" uuid="82c87728-949f-4ac6-ac1c-485de2bd8879" x="752" y="3" width="50" height="14" fontName="DejaVu Sans" fontSize="11.0" evaluationTime="Report">
+			<expression><![CDATA[$V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="45" splitType="Stretch">
+		<element kind="line" uuid="fcb7dbc0-8d4e-48f5-9b90-fd0afd4c5171" x="0" y="0" width="802" height="1" forecolor="#AAAAAA"/>
+		<element kind="textField" uuid="5550da40-3b9e-4c74-8066-c730f054cfae" x="0" y="8" width="300" height="13" fontName="DejaVu Sans" fontSize="11.0">
+			<expression><![CDATA["Printed By : " + $P{PRINTED_BY}]]></expression>
+		</element>
+		<element kind="textField" uuid="b5658ed4-4a0e-41aa-935a-204b93084fa6" x="0" y="24" width="300" height="13" fontName="DejaVu Sans" fontSize="11.0">
+			<expression><![CDATA["Printed Date : " + $P{PRINTED_DATE}]]></expression>
+		</element>
+		<element kind="textField" uuid="0b4a38bf-2c1e-4724-a28f-47aaba52c465" x="600" y="24" width="200" height="13" fontName="DejaVu Sans" fontSize="11.0" evaluationTime="Report" bold="true" hTextAlign="Right">
+			<expression><![CDATA["Total Guests : " + $V{V_TOTAL_GUESTS}]]></expression>
+		</element>
+	</summary>
+</jasperReport>

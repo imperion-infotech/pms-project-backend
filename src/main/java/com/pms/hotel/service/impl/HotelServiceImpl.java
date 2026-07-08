@@ -29,6 +29,7 @@ import com.pms.hotel.entity.HotelMapper;
 import com.pms.hotel.entity.HotelRequestDTO;
 import com.pms.hotel.entity.HotelResponseDTO;
 import com.pms.hotel.entity.HotelUpdateRequestDTO;
+import com.pms.hotel.entity.PropertyByIdDto;
 import com.pms.hotel.repository.HotelRepository;
 import com.pms.hotel.service.IHotelService;
 import com.pms.nightaudit.entity.BusinessDate;
@@ -250,5 +251,11 @@ private	static final Logger logger = LoggerFactory.getLogger(HotelServiceImpl.cl
 		return hotelRepository.findAll(spec);		
 		
 	}
+	
+	 public PropertyByIdDto getPropertyById(Long id) {
+	        return hotelRepository.findPropertyById(id)
+	                .orElseThrow(() ->
+	                        new ResourceNotFoundException("Hotel not found: " + id));
+	    }
 	
 }
