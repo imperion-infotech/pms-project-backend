@@ -98,10 +98,10 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 		<element kind="staticText" uuid="8a7bf036-baf4-4728-92b7-c2f73e2109cd" x="30" y="2" width="65" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Room]]></text>
 		</element>
-		<element kind="staticText" uuid="4b200e82-fb5a-4f77-ab13-62d5fe00f5e3" x="95" y="2" width="55" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="4b200e82-fb5a-4f77-ab13-62d5fe00f5e3" x="95" y="2" width="75" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Room Type]]></text>
 		</element>
-		<element kind="staticText" uuid="ed7ceaee-58a9-4146-9760-42566aa07372" x="150" y="2" width="245" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="staticText" uuid="ed7ceaee-58a9-4146-9760-42566aa07372" x="180" y="2" width="215" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 			<text><![CDATA[Status]]></text>
 		</element>
 		<element kind="staticText" uuid="f3e7d5bd-d367-44b4-86ac-51c7b193e504" x="395" y="2" width="65" height="16" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
@@ -132,7 +132,7 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 		<element kind="line" uuid="4b64a427-e401-4eb6-8dfd-ca1db246e6ea" x="95" y="0" width="1" height="20" forecolor="#999999">
 			<pen lineWidth="0.5"/>
 		</element>
-		<element kind="line" uuid="b6de57d6-cf2d-44a5-85fa-2bcd1c37a15a" x="150" y="0" width="1" height="20" forecolor="#999999">
+		<element kind="line" uuid="b6de57d6-cf2d-44a5-85fa-2bcd1c37a15a" x="175" y="0" width="1" height="20" forecolor="#999999">
 			<pen lineWidth="0.5"/>
 		</element>
 		<element kind="line" uuid="d488239a-aca3-4861-80e0-e5ec4fdfe17b" x="395" y="0" width="1" height="20" forecolor="#999999">
@@ -186,7 +186,7 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 			<element kind="line" uuid="910ece9d-003b-40d8-b604-9f574a88e59e" x="95" y="0" width="1" height="29" forecolor="#999999">
 				<pen lineWidth="0.5"/>
 			</element>
-			<element kind="line" uuid="a009b256-81d9-4c3a-a232-125cb932d69a" x="150" y="0" width="1" height="29" forecolor="#999999">
+			<element kind="line" uuid="a009b256-81d9-4c3a-a232-125cb932d69a" x="175" y="-3" width="1" height="29" forecolor="#999999">
 				<pen lineWidth="0.5"/>
 			</element>
 			<element kind="line" uuid="7d6ad1de-eee2-436f-9cef-8f09ac89cd05" x="395" y="0" width="1" height="29" forecolor="#999999">
@@ -212,7 +212,7 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 			</element>
 		</band>
 	</detail>
-	<pageFooter height="40" splitType="Stretch">
+	<pageFooter height="47" splitType="Stretch">
 		<element kind="line" uuid="ce0dfd78-ecbf-4d45-8902-7861be881dc3" x="0" y="0" width="782" height="1" forecolor="#000000"/>
 		<element kind="textField" uuid="5ee01e19-c7d0-48a1-b638-767f60a55561" x="0" y="6" width="250" height="14" fontName="DejaVu Sans" fontSize="11.0">
 			<expression><![CDATA["Printed By : " + $P{printedBy}]]></expression>
@@ -220,10 +220,10 @@ ORDER BY b.building_name, f.floor_name, rm.room_name
 		<element kind="textField" uuid="6556a304-0dce-49d9-8275-43d691095e58" x="0" y="22" width="300" height="14" fontName="DejaVu Sans" fontSize="11.0">
 			<expression><![CDATA["Printed On : " + $P{printedOn}]]></expression>
 		</element>
-		<element kind="staticText" uuid="16fdec2e-186c-4f94-bbef-29364db81050" x="291" y="23" width="200" height="14" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center">
+		<element kind="staticText" uuid="16fdec2e-186c-4f94-bbef-29364db81050" x="291" y="28" width="200" height="14" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center">
 			<text><![CDATA[House-Keeper's Signature]]></text>
 		</element>
-		<element kind="line" uuid="57f17584-0a80-4996-a82e-98d4a61d92d6" x="291" y="36" width="200" height="1" forecolor="#000000"/>
+		<element kind="line" uuid="57f17584-0a80-4996-a82e-98d4a61d92d6" x="291" y="41" width="200" height="1" forecolor="#000000"/>
 		<element kind="staticText" uuid="dcff51b5-0265-4aeb-b3fa-a247d19149c3" x="500" y="6" width="282" height="14" fontName="DejaVu Sans" fontSize="11.0" italic="true" hTextAlign="Right">
 			<text><![CDATA[* Room(s) has today's arrival]]></text>
 		</element>
