@@ -1,7 +1,16 @@
 <!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
-<jasperReport name="shiftreport" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f3a1b2c-4d5e-4f60-8a91-2b3c4d5e6f70">
+<jasperReport name="shiftreport" language="java" columnCount="1" pageWidth="842" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f3a1b2c-4d5e-4f60-8a91-2b3c4d5e6f70">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="hotelId" class="java.lang.Long"/>
 	<parameter name="userId" class="java.lang.Long"/>
 	<parameter name="fromDate" class="java.sql.Date"/>
@@ -155,8 +164,8 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000002" x="0" y="21" width="400" height="18" fontSize="11.0">
 					<expression><![CDATA["Login: " + ($F{login_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{login_time}))]]></expression>
 				</element>
-				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="189" y="21" width="402" height="18" fontSize="11.0">
-					<expression><![CDATA["|               Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="111" y="21" width="402" height="18" fontSize="11.0">
+					<expression><![CDATA["           |          Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
 				</element>
 			</band>
 		</groupHeader>

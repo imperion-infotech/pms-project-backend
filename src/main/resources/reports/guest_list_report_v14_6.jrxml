@@ -149,13 +149,13 @@ ORDER BY
 				<element kind="staticText" uuid="b1000007-0000-4000-8000-000000000007" x="477" y="21" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 					<text><![CDATA[Birth Date]]></text>
 				</element>
-				<element kind="staticText" uuid="b1000008-0000-4000-8000-000000000008" x="547" y="21" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<element kind="staticText" uuid="b1000008-0000-4000-8000-000000000008" x="547" y="21" width="77" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 					<text><![CDATA[Nationality]]></text>
 				</element>
-				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000018" x="617" y="21" width="80" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000018" x="628" y="21" width="67" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 					<text><![CDATA[Doc Type]]></text>
 				</element>
-				<element kind="line" uuid="b1000016-0000-4000-8000-000000000019" x="695" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000016-0000-4000-8000-000000000019" x="697" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="staticText" uuid="b1000009-0000-4000-8000-000000000009" x="697" y="21" width="105" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 					<text><![CDATA[ID Info]]></text>
 				</element>
@@ -163,9 +163,9 @@ ORDER BY
 				<element kind="line" uuid="b1000011-0000-4000-8000-000000000011" x="175" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000012-0000-4000-8000-000000000012" x="325" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000013-0000-4000-8000-000000000013" x="400" y="18" width="1" height="23" forecolor="#AAAAAA"/>
-				<element kind="line" uuid="b1000014-0000-4000-8000-000000000014" x="475" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000014-0000-4000-8000-000000000014" x="476" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000015-0000-4000-8000-000000000015" x="545" y="18" width="1" height="23" forecolor="#AAAAAA"/>
-				<element kind="line" uuid="b1000016-0000-4000-8000-000000000016" x="615" y="18" width="1" height="23" forecolor="#AAAAAA"/>
+				<element kind="line" uuid="b1000016-0000-4000-8000-000000000016" x="624" y="18" width="1" height="23" forecolor="#AAAAAA"/>
 				<element kind="line" uuid="b1000017-0000-4000-8000-000000000017" x="0" y="39" width="802" height="1" forecolor="#000000"/>
 				<element kind="line" uuid="22053bb0-1599-477e-b878-fcddc05080e0" x="1" y="19" width="802" height="1" forecolor="#000000"/>
 			</band>
@@ -221,7 +221,7 @@ ORDER BY
 			<element kind="textField" uuid="d1495176-ecdf-4727-b0f1-2024c92a2dba" x="547" y="8" width="68" height="18" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true" hTextAlign="Center">
 				<expression><![CDATA[$F{nationality}]]></expression>
 			</element>
-			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347c" x="617" y="8" width="80" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
+			<element kind="textField" uuid="10af356e-d915-4f67-94ca-ef60aa50347c" x="630" y="8" width="67" height="18" fontName="DejaVu Sans" fontSize="11.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center">
 				<expression><![CDATA[$F{doc_type}]]></expression>
 				<box leftPadding="2"/>
 			</element>
@@ -236,9 +236,9 @@ ORDER BY
 			<element kind="line" uuid="5b8f69f2-f0bc-463f-91a0-92a245d74d52" x="175" y="-11" width="1" height="56" forecolor="#CCCCCC"/>
 			<element kind="line" uuid="c5af9daa-d9b1-4ac0-85ae-4dfb95e5064c" x="400" y="-12" width="1" height="56" forecolor="#CCCCCC"/>
 			<element kind="line" uuid="68862340-2389-461b-baf1-f5a57e73ab90" x="545" y="-11" width="1" height="56" forecolor="#CCCCCC"/>
-			<element kind="line" uuid="24caaed1-9198-40c5-8e4e-9eb45a79bae5" x="477" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
-			<element kind="line" uuid="157e723a-aaf0-4010-b32b-913dd24859eb" x="616" y="-8" width="1" height="52" forecolor="#CCCCCC"/>
-			<element kind="line" uuid="4b9f5f42-4471-44bf-a224-6fa03e0b8a5b" x="696" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="24caaed1-9198-40c5-8e4e-9eb45a79bae5" x="476" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="157e723a-aaf0-4010-b32b-913dd24859eb" x="624" y="-8" width="1" height="52" forecolor="#CCCCCC"/>
+			<element kind="line" uuid="4b9f5f42-4471-44bf-a224-6fa03e0b8a5b" x="697" y="-10" width="1" height="54" forecolor="#CCCCCC"/>
 			<element kind="line" uuid="5e5f1643-97fa-4c7b-ba41-81967c6d305c" x="802" y="-27" width="1" height="69" forecolor="#CCCCCC"/>
 		</band>
 	</detail>

@@ -128,7 +128,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     authorities = rolePermissionCacheService.getAuthoritiesByRoleIds(roleIds);
                 }
                 
-                logger.info("Authorities: {}", authorities);
+//                logger.info("Authorities: {}", authorities);
 
                 CustomUserPrincipal principal = new CustomUserPrincipal(
                         userId,

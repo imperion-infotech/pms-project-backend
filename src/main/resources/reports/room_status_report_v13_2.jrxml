@@ -251,9 +251,8 @@ ORDER BY  series.rn]]></query>
 	<group name="floor_group">
 		<expression><![CDATA[($F{current_building} != null ? $F{current_building} : "") + " - " + ($F{current_floor} != null ? $F{current_floor} : "")]]></expression>
 		<groupHeader>
-			<band height="18" splitType="Stretch">
-				<element kind="rectangle" uuid="a1b2c3d4-e5f6-7890-abcd-ef1234567890" mode="Opaque" x="0" y="0" width="572" height="16" forecolor="#CCCCCC" backcolor="#FFFFFF"/>
-				<element kind="textField" uuid="b2c3d4e5-f6a7-8901-bcde-f12345678901" x="4" y="1" width="568" height="14" forecolor="#000000" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+			<band height="27" splitType="Stretch">
+				<element kind="textField" uuid="b2c3d4e5-f6a7-8901-bcde-f12345678901" x="4" y="8" width="568" height="14" forecolor="#000000" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
 					<expression><![CDATA[($F{current_building} != null ? $F{current_building} : "No Building") + "  /  " + ($F{current_floor} != null ? $F{current_floor} : "No Floor")]]></expression>
 				</element>
 			</band>
@@ -533,10 +532,6 @@ ORDER BY  series.rn]]></query>
 		</band>
 	</detail>
 	<pageFooter height="32" splitType="Stretch">
-		<element kind="staticText" uuid="9f52e4a2-5706-475d-bc64-2e20189fb7c0" x="0" y="3" width="300" height="14" forecolor="#999999" fontSize="11.0">
-			<text><![CDATA[Developed by Imperion Infotech | Property Management System]]></text>
-			<property name="com.jaspersoft.studio.unit.width" value="px"/>
-		</element>
 		<element kind="textField" uuid="7f078cb3-6a58-4894-9405-ff2962383393" x="513" y="3" width="51" height="1" fontSize="11.0" evaluationTime="Report">
 			<expression><![CDATA[$V{PAGE_NUMBER}]]></expression>
 		</element>
@@ -577,13 +572,13 @@ ORDER BY  series.rn]]></query>
 			<expression><![CDATA[$V{COUNT_R_READY}]]></expression>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="staticText" uuid="c9867a7f-b539-4567-9dd7-bfede0dec8e0" x="0" y="30" width="90" height="14" fontSize="11.0" bold="true">
+		<element kind="staticText" uuid="c9867a7f-b539-4567-9dd7-bfede0dec8e0" x="0" y="30" width="90" height="14" fontSize="11.0" bold="false">
 			<text><![CDATA[Printed By: ]]></text>
 		</element>
 		<element kind="textField" uuid="29fe5956-4bf7-4efe-9855-699afcbd7eba" x="90" y="30" width="300" height="14" fontSize="11.0">
 			<expression><![CDATA[$P{PRINTED_BY}]]></expression>
 		</element>
-		<element kind="staticText" uuid="9afe65fa-d6b3-4863-a807-1cdcbacbcc8a" x="0" y="46" width="90" height="14" fontSize="11.0" bold="true">
+		<element kind="staticText" uuid="9afe65fa-d6b3-4863-a807-1cdcbacbcc8a" x="0" y="46" width="90" height="14" fontSize="11.0" bold="false">
 			<text><![CDATA[Print Date: ]]></text>
 		</element>
 		<element kind="textField" uuid="759d2918-f2f4-41e3-87ff-9720c79dbf88" x="90" y="46" width="300" height="14" fontSize="11.0">
