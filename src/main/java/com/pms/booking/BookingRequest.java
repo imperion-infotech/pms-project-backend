@@ -27,6 +27,9 @@ public class BookingRequest {
 	    private Long guestDetailsId;
 	    private Long rentDetailsId;
 	    private String source;
+	    private Double balance;
+	    private Double paymentAmount; 
+	    private String bookingRefNo;
 	    
 		
 	    

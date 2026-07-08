@@ -53,7 +53,7 @@ public class ReportCompiler {
                 new ClassPathResource("reports/house_keeping_report_v12_6.jasper");
         
         ClassPathResource shiftReportResource =
-                new ClassPathResource("reports/shiftreport_14.jasper");
+                new ClassPathResource("reports/shiftreport_15.jasper");
         
         ClassPathResource monthlyCollectionPaymentTypeReportResource =
                 new ClassPathResource("reports/monthly_collection_payment_type_report_v2.jasper");

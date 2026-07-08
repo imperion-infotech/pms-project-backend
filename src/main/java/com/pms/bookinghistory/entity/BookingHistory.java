@@ -76,5 +76,10 @@ public class BookingHistory extends BaseEntity {
 
     @Column(name = "remarks")
     private String remarks;
+    
+    private String bookingRefNo;
+    private Double balance;
+    private Double paymentAmount;
+    
 
 }

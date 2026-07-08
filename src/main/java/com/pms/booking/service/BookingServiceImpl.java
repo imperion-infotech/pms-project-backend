@@ -98,6 +98,8 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        booking.setRoomFeatures(req.getRoomFeatures());
 	        booking.setCreatedBy(userId);
 	        booking.setSource(req.getSource());
+	        booking.setBalance(req.getBalance());
+	        booking.setPaymentAmount(req.getPaymentAmount());
 	        
 	        assignHotel(booking, booking.getHotelId());
 	        
@@ -151,6 +153,7 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        history.setBookingId(booking.getId());
 	        history.setActionType(booking.getStatus());
 	        history.setCreatedOn(LocalDateTime.now());
+	        
 
 	        bookingHistoryRepository.save(history);
 	        
@@ -213,6 +216,9 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        booking.setGuestDetailsId(req.getGuestDetailsId());
 	        booking.setRentDetailsId(req.getRentDetailsId());
 	        booking.setSource(req.getSource());
+	        booking.setBalance(req.getBalance());
+	        booking.setPaymentAmount(req.getPaymentAmount());
+	        booking.setBookingRefNo(req.getBookingRefNo());
 	        
 //	        GuestDetails guestDetails =  guestDetailsService.getGuestDetail(req.getGuestDetailsId());
 	        

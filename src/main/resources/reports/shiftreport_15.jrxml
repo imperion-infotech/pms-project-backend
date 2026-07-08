@@ -1,0 +1,366 @@
+<!-- Created with Jaspersoft Studio version 7.0.6.final using JasperReports Library version 7.0.6-5d2a603fdc6b3db8f842a83383e594f41891534d  -->
+<jasperReport name="shiftreport" language="java" columnCount="1" pageWidth="842" pageHeight="595" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f3a1b2c-4d5e-4f60-8a91-2b3c4d5e6f70">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="hotelId" class="java.lang.Long"/>
+	<parameter name="userId" class="java.lang.Long"/>
+	<parameter name="fromDate" class="java.sql.Date"/>
+	<parameter name="toDate" class="java.sql.Date"/>
+	<parameter name="hotelName" class="java.lang.String"/>
+	<parameter name="hotelAddress" class="java.lang.String"/>
+	<parameter name="hotelEmail" class="java.lang.String"/>
+	<parameter name="hotelPhone" class="java.lang.String"/>
+	<parameter name="printedBy" class="java.lang.String"/>
+	<query language="sql"><![CDATA[WITH shift_data AS (
+    SELECT
+        (COALESCE(pd.payment_date, usl.logout_time, usl.login_time)::date
+            + CASE WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 6 THEN -1 ELSE 0 END
+        )::text
+        || '-'
+        || CASE
+             WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) >= 6  AND EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 14 THEN '1'
+             WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) >= 14 AND EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 22 THEN '2'
+             ELSE '3'
+           END                                  AS shift_block_id,
+
+        (COALESCE(pd.payment_date, usl.logout_time, usl.login_time)::date
+            + CASE WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 6 THEN -1 ELSE 0 END
+        )::date                                 AS shift_block_date,
+
+        CASE
+             WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) >= 6  AND EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 14 THEN 1
+             WHEN EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) >= 14 AND EXTRACT(HOUR FROM COALESCE(pd.payment_date, usl.logout_time, usl.login_time)) < 22 THEN 2
+             ELSE 3
+        END                                      AS shift_block_no,
+
+        pd.payment_date                         AS payment_date,
+        gd.check_in_date::date                  AS date_in,
+        gd.check_out_date::date                 AS date_out,
+        rm.room_name                            AS room,
+        COALESCE(NULLIF(TRIM(CONCAT(COALESCE(per.first_name, ''), ' ', COALESCE(per.last_name, ''))), ''), 'No Payments') AS guest_name,
+
+        usl.user_id                             AS user_id,
+        COALESCE(u.username, 'Unassigned')      AS user_name,
+        usl.login_time                          AS login_time,
+        usl.logout_time                         AS logout_time,
+
+        CASE WHEN UPPER(pt.payment_type_name) = 'CASH' THEN pd.amount ELSE 0 END                 AS cash_amt_raw,
+        CASE WHEN UPPER(pt.payment_type_name) NOT IN ('CASH','CHECK','CHEQUE') THEN pd.amount ELSE 0 END AS other_amt_raw,
+        CASE WHEN UPPER(pt.payment_type_name) IN ('CHECK','CHEQUE') THEN pd.amount ELSE 0 END     AS bank_amt_raw,
+
+        pd.amount                                                                       AS amount_raw,
+        pt.payment_type_name                                                            AS payment_type,
+
+        ROW_NUMBER() OVER (
+            PARTITION BY COALESCE(pd.id::text, 'nopay-' || usl.id::text)
+            ORDER BY usl.login_time DESC
+        ) AS rn
+
+    FROM user_session_log usl
+    LEFT JOIN users u
+        ON u.id = usl.user_id
+       AND (u.is_deleted = false OR u.is_deleted IS NULL)
+    LEFT JOIN payment_details pd
+        ON pd.hotel_id = usl.hotel_id
+       AND pd.payment_date >= usl.login_time
+       AND pd.payment_date <= usl.logout_time
+       AND (pd.is_deleted = false OR pd.is_deleted IS NULL)
+       AND (pd.is_active = true OR pd.is_active IS NULL)
+    LEFT JOIN payment_type pt ON pd.payment_type_id = pt.id
+    LEFT JOIN guest_details gd ON pd.guest_details_id = gd.guest_details_id
+    LEFT JOIN room_master rm ON gd.room_master_id = rm.id
+    LEFT JOIN personal_details per ON gd.personal_details_id = per.id
+
+    WHERE usl.hotel_id = $P{hotelId}
+      AND (usl.is_deleted = false OR usl.is_deleted IS NULL)
+      AND usl.logout_time IS NOT NULL
+      AND date(usl.login_time)  <= $P{toDate}
+      AND date(usl.logout_time) >= $P{fromDate}
+      AND ($P{userId} IS NULL OR usl.user_id = $P{userId})
+)
+SELECT
+    shift_block_id,
+    shift_block_date,
+    shift_block_no,
+    payment_date,
+    date_in,
+    date_out,
+    room,
+    guest_name,
+    user_id,
+    user_name,
+    login_time,
+    logout_time,
+    COALESCE(cash_amt_raw, 0)  AS cash_amt,
+    COALESCE(other_amt_raw, 0) AS other_amt,
+    COALESCE(bank_amt_raw, 0)  AS bank_amt,
+    COALESCE(amount_raw, 0)    AS amount,
+    payment_type
+FROM shift_data
+WHERE rn = 1
+  AND shift_block_date BETWEEN $P{fromDate} AND $P{toDate}
+  AND payment_date IS NOT NULL
+ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]></query>
+	<field name="shift_block_id" class="java.lang.String"/>
+	<field name="shift_block_date" class="java.sql.Date"/>
+	<field name="shift_block_no" class="java.lang.Integer"/>
+	<field name="payment_date" class="java.sql.Timestamp"/>
+	<field name="date_in" class="java.sql.Date"/>
+	<field name="date_out" class="java.sql.Date"/>
+	<field name="room" class="java.lang.String"/>
+	<field name="guest_name" class="java.lang.String"/>
+	<field name="user_id" class="java.lang.Long"/>
+	<field name="user_name" class="java.lang.String"/>
+	<field name="login_time" class="java.sql.Timestamp"/>
+	<field name="logout_time" class="java.sql.Timestamp"/>
+	<field name="cash_amt" class="java.math.BigDecimal"/>
+	<field name="other_amt" class="java.math.BigDecimal"/>
+	<field name="bank_amt" class="java.math.BigDecimal"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="payment_type" class="java.lang.String"/>
+	<variable name="userGroupCash" resetType="Group" calculation="Sum" resetGroup="UserGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+	</variable>
+	<variable name="userGroupOther" resetType="Group" calculation="Sum" resetGroup="UserGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+	</variable>
+	<variable name="userGroupBank" resetType="Group" calculation="Sum" resetGroup="UserGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{bank_amt}]]></expression>
+	</variable>
+	<variable name="shiftGroupCash" resetType="Group" calculation="Sum" resetGroup="ShiftGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+	</variable>
+	<variable name="shiftGroupOther" resetType="Group" calculation="Sum" resetGroup="ShiftGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+	</variable>
+	<variable name="shiftGroupBank" resetType="Group" calculation="Sum" resetGroup="ShiftGroup" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{bank_amt}]]></expression>
+	</variable>
+	<variable name="grandCash" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{cash_amt}]]></expression>
+	</variable>
+	<variable name="grandOther" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{other_amt}]]></expression>
+	</variable>
+	<variable name="grandBank" calculation="Sum" class="java.math.BigDecimal">
+		<expression><![CDATA[$F{bank_amt}]]></expression>
+	</variable>
+	<group name="UserGroup">
+		<expression><![CDATA[$F{user_name}]]></expression>
+		<groupHeader>
+			<band height="42">
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000001" x="0" y="0" width="400" height="20" fontSize="11.0" bold="true">
+					<expression><![CDATA["Staff: " + $F{user_name}]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000002" x="0" y="21" width="400" height="18" fontSize="11.0">
+					<expression><![CDATA["Login: " + ($F{login_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{login_time}))]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000003" x="111" y="21" width="402" height="18" fontSize="11.0">
+					<expression><![CDATA["           |          Logout: " + ($F{logout_time} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yy hh:mm a").format($F{logout_time}))]]></expression>
+				</element>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28">
+				<element kind="line" uuid="1a2b3c4d-0001-4001-8001-000000000004" x="0" y="0" width="802" height="1"/>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000005" x="424" y="4" width="144" height="20" fontSize="11.0" bold="true">
+					<expression><![CDATA[" Subtotal"]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="471" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{userGroupCash}]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000007" x="577" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{userGroupOther}]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000008" x="682" y="4" width="120" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{userGroupBank}]]></expression>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="ShiftGroup">
+		<expression><![CDATA[$F{shift_block_id}]]></expression>
+		<groupHeader>
+			<band height="48">
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000001" x="0" y="0" width="500" height="20" fontSize="11.0" bold="true">
+					<expression><![CDATA["Shift Time " + new java.text.SimpleDateFormat("M/d/yyyy").format($F{shift_block_date}) + " " +
+                        ($F{shift_block_no}.intValue() == 1 ? "6:00 AM - 2:00 PM" :
+                         $F{shift_block_no}.intValue() == 2 ? "2:00 PM - 10:00 PM" :
+                         "10:00 PM - 6:00 AM")]]></expression>
+				</element>
+				<element kind="line" uuid="1a2b3c4d-0002-4002-8002-000000000006" x="0" y="21" width="802" height="1">
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000001" x="0" y="22" width="130" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Guest Name]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000002" x="130" y="22" width="60" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Room]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000003" x="190" y="22" width="85" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Date In]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000004" x="275" y="22" width="85" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Date Out]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000005" x="360" y="22" width="112" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Payment Date]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000006" x="472" y="22" width="105" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Cash]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000007" x="577" y="22" width="105" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Other]]></text>
+				</element>
+				<element kind="staticText" uuid="1a2b3c4d-0004-4004-8004-000000000008" x="682" y="22" width="120" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+					<text><![CDATA[Bank]]></text>
+				</element>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000009" x="0" y="47" width="802" height="1"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000010" x="0" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000011" x="130" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000012" x="190" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000013" x="275" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000014" x="360" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000015" x="472" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000016" x="577" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000017" x="682" y="22" width="1" height="26"/>
+				<element kind="line" uuid="1a2b3c4d-0004-4004-8004-000000000018" x="801" y="22" width="1" height="26"/>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000002" x="360" y="0" width="112" height="20" fontSize="11.0" bold="true" hTextAlign="Right">
+					<expression><![CDATA["Total"]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000003" x="472" y="0" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{shiftGroupCash}]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000004" x="577" y="0" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{shiftGroupOther}]]></expression>
+				</element>
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000005" x="682" y="0" width="120" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<expression><![CDATA[$V{shiftGroupBank}]]></expression>
+				</element>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="GuestGroup">
+		<expression><![CDATA[$F{guest_name}]]></expression>
+	</group>
+	<title height="70">
+		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000001" x="0" y="0" width="802" height="24" fontSize="16.0" bold="true" hTextAlign="Left">
+			<expression><![CDATA[$P{hotelName} == null ? "" : $P{hotelName}]]></expression>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000002" x="0" y="26" width="802" height="18" fontSize="11.0" hTextAlign="Left">
+			<expression><![CDATA[$P{hotelAddress} == null ? "" : $P{hotelAddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000003" x="0" y="44" width="802" height="26" fontSize="10.0" vTextAlign="Top">
+			<expression><![CDATA[
+                (($P{hotelEmail} == null || $P{hotelEmail}.isEmpty()) ? "" : $P{hotelEmail})
+                + (($P{hotelEmail} != null && !$P{hotelEmail}.isEmpty() && $P{hotelPhone} != null && !$P{hotelPhone}.isEmpty()) ? "  |  " : "")
+                + (($P{hotelPhone} == null || $P{hotelPhone}.isEmpty()) ? "" : $P{hotelPhone})
+            ]]></expression>
+		</element>
+	</title>
+	<pageHeader height="18">
+		<element kind="textField" uuid="9d973c5e-c747-45af-a619-fef2b09d0fda" x="0" y="0" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" bold="true" vTextAlign="Middle">
+			<expression><![CDATA["Shift Report for : " + new java.text.SimpleDateFormat("MM/dd/yyyy").format($P{fromDate})]]></expression>
+		</element>
+	</pageHeader>
+	<detail>
+		<band height="21">
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000001" x="0" y="0" width="130" height="18" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{guest_name}]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000002" x="130" y="0" width="60" height="18" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{room} == null ? "N/A" : $F{room}]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000003" x="190" y="0" width="85" height="18" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{date_in} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yyyy").format($F{date_in})]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000004" x="275" y="0" width="85" height="18" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{date_out} == null ? "N/A" : new java.text.SimpleDateFormat("MM/dd/yyyy").format($F{date_out})]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000005" x="360" y="0" width="112" height="18" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+				<expression><![CDATA[$F{payment_date} == null ? "N/A" : new java.text.SimpleDateFormat("M/d/yy hh:mm a").format($F{payment_date})]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000006" x="472" y="0" width="105" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{cash_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000007" x="577" y="0" width="105" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{other_amt}]]></expression>
+			</element>
+			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000008" x="682" y="0" width="120" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{bank_amt}]]></expression>
+			</element>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000009" x="0" y="20" width="802" height="1">
+				<pen lineColor="#A69F9F"/>
+			</element>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000019" x="0" y="0" width="802" height="1">
+				<pen lineColor="#ADA7A6"/>
+			</element>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000010" x="0" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000011" x="130" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000012" x="190" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000013" x="275" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000014" x="360" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000015" x="472" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000016" x="577" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000017" x="682" y="0" width="1" height="21"/>
+			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000018" x="801" y="0" width="1" height="21"/>
+		</band>
+	</detail>
+	<pageFooter height="49">
+		<element kind="textField" uuid="1a2b3c4d-0006-4006-8006-000000000001" x="700" y="0" width="102" height="16" fontSize="11.0" hTextAlign="Right">
+			<expression><![CDATA["Page " + $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="125">
+		<element kind="line" uuid="1a2b3c4d-0007-4007-8007-000000000001" x="550" y="6" width="252" height="1"/>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000012" x="0" y="64" width="300" height="20" fontName="DejaVu Sans" fontSize="11.0" bold="false">
+			<expression><![CDATA["Printed By: " + (($P{printedBy} == null || $P{printedBy}.isEmpty()) ? "-" : $P{printedBy})]]></expression>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000013" x="0" y="90" width="300" height="20" fontName="DejaVu Sans" fontSize="11.0" bold="false">
+			<expression><![CDATA["Print Date: " + new java.text.SimpleDateFormat("MM/dd/yyyy hh:mm:ss a").format(new java.util.Date())]]></expression>
+		</element>
+		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000006" x="550" y="10" width="140" height="20" fontSize="11.0" bold="true">
+			<text><![CDATA[  Cash]]></text>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000003" x="690" y="10" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{grandCash}]]></expression>
+		</element>
+		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000007" x="550" y="34" width="140" height="20" fontSize="11.0" bold="true">
+			<text><![CDATA[  Other]]></text>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000004" x="690" y="34" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{grandOther}]]></expression>
+		</element>
+		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000008" x="550" y="58" width="140" height="20" fontSize="11.0" bold="true">
+			<text><![CDATA[  Bank]]></text>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000005" x="690" y="58" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{grandBank}]]></expression>
+		</element>
+		<element kind="line" uuid="1a2b3c4d-0007-4007-8007-000000000009" x="550" y="84" width="252" height="1"/>
+		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000010" x="550" y="90" width="140" height="20" fontSize="12.0" bold="true">
+			<text><![CDATA[Grand Total]]></text>
+		</element>
+		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000011" x="690" y="90" width="112" height="20" fontSize="12.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<expression><![CDATA[$V{grandCash}.add($V{grandOther}).add($V{grandBank})]]></expression>
+		</element>
+		<element kind="line" uuid="b15d4be0-7d5a-4a88-942a-b0f61c2377ad" x="550" y="7" width="1" height="78"/>
+		<element kind="line" uuid="5abeb5a9-ecdc-4d7a-bdcf-cf7ce9107f0f" x="690" y="7" width="1" height="78"/>
+		<element kind="line" uuid="9cf0e490-7ff9-4de0-8e56-ef910172b7cd" x="551" y="32" width="252" height="1"/>
+		<element kind="line" uuid="01b92915-6e84-4e5d-8e6a-9c5e30204a67" x="550" y="55" width="252" height="1"/>
+		<element kind="line" uuid="f3f81fd6-619f-46d0-864b-3b682dee9192" x="803" y="7" width="1" height="78"/>
+	</summary>
+</jasperReport>
