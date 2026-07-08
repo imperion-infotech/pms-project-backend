@@ -119,8 +119,10 @@ public class BookingServiceImpl extends BaseHotelService implements IBookingServ
 	        stayDetails.setRateTypeEnum(RateTypeEnum.RACK);
 	        stayDetails.setStayStatusEnum(StayStatusEnum.Confirmed);
 	        stayDetails.setCreatedBy(userId);
+	        stayDetails.setComment("");
 	        stayDetails.setHotelId(hotelId);
 	        stayDetails.setNoOfGuest(0);
+	        
 	        StayDetails createdstayDetails = stayDetailsService.createStayDetails(stayDetails);
 	        
 	        GuestDetails gDetails =new GuestDetails();
