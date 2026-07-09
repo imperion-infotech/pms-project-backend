@@ -126,7 +126,7 @@ public class ReportService {
     
     @Auditable(action = "CREATE", entity = "ROOMSTATUSREPORT")    
 //    @Async
-    public byte[] generateRoomStatusReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,Long buildingId,Long floorId) 
+    public byte[] generateRoomStatusReport(Long hotelId, String format, Long buildingId,Long floorId) 
     		throws Exception {
 
         // Fetch hotel details from DB
@@ -150,9 +150,10 @@ public class ReportService {
         params.put("PRINTED_BY",    username);
         params.put("REPORT_DATE",
             new SimpleDateFormat("M/d/yyyy").format(new Date()));
+        /*
         params.put("FROM_DATE", java.sql.Date.valueOf(fromDate));
         params.put("TO_DATE", java.sql.Date.valueOf(toDate));
-        /*
+        
         params.put("BUILDING_ID",buildingId );
         params.put("FLOOR_ID",floorId );
         */
@@ -196,7 +197,7 @@ public class ReportService {
     
  
     @Auditable(action = "CREATE", entity = "DAILYCOLLECTIONREPORT")
-    public byte[] generateDailyCollectionReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate) {
+    public byte[] generateDailyCollectionReport(Long hotelId, String format,LocalDate fromDate, LocalDate toDate) {
     	   // Fetch hotel details from DB
         Hotel hotel = hotelRepository.findById(hotelId)
                         .orElseThrow(() -> new RuntimeException("Hotel not found"));
@@ -219,7 +220,9 @@ public class ReportService {
         params.put("REPORT_DATE",
             new SimpleDateFormat("M/d/yyyy").format(new Date()));
         params.put("FROM_DATE", java.sql.Date.valueOf(fromDate));
+        if(toDate!= null) {
         params.put("TO_DATE", java.sql.Date.valueOf(toDate));
+        }
         JasperPrint jasperPrint = null;
         Connection con = null;
 
@@ -259,7 +262,64 @@ public class ReportService {
         	}
         	}
         }
-    
+    /*
+    public byte[] generateDailyCollectionReport(Long hotelId, String format, LocalDate reportDate) {
+        // Fetch hotel details from DB
+        Hotel hotel = hotelRepository.findById(hotelId)
+                        .orElseThrow(() -> new RuntimeException("Hotel not found"));
+
+        // Get logged in username
+        String username = SecurityContextHolder.getContext()
+                            .getAuthentication().getName();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("HOTEL_ID",      hotelId);
+        params.put("HOTEL_NAME",    hotel.getHotelName());
+        params.put("HOTEL_ADDRESS", hotel.getAddress());
+        params.put("HOTEL_CITY",    hotel.getCity());
+        params.put("HOTEL_STATE",   hotel.getState());
+        params.put("HOTEL_COUNTRY", hotel.getCountry());
+        params.put("HOTEL_ZIPCODE", hotel.getZipCode());
+        params.put("HOTEL_PHONE",   hotel.getContactNumber());
+        params.put("HOTEL_EMAIL",   hotel.getEmail());
+        params.put("PRINTED_BY",    username);
+        params.put("REPORT_DATE",   java.sql.Date.valueOf(reportDate));
+
+        JasperPrint jasperPrint = null;
+        Connection con = null;
+
+        try {
+            con = dataSource.getConnection();
+            jasperPrint = JasperFillManager.fillReport(
+                    reportCompiler.getDailyCollectionReport(),
+                    params,
+                    con
+            );
+
+            // Export
+            if ("xlsx".equalsIgnoreCase(format)) {
+                JRXlsxExporter exporter = new JRXlsxExporter();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(out));
+                exporter.exportReport();
+                return out.toByteArray();
+            } else {
+                return JasperExportManager.exportReportToPdf(jasperPrint);
+            }
+
+        } catch (JRException | SQLException e) {
+            logger.info("Exception in e::" + e.getMessage());
+            throw new RuntimeException("Error generating Daily Collection Report", e);
+        } finally {
+            try {
+                con.close();
+            } catch (Exception e) {
+                e.getMessage();
+            }
+        }
+    }
+    */
     
     @Auditable(action = "CREATE", entity = "GUESTLISTREPORT")
     public byte[] generateGuestListReport(Long hotelId, String format, LocalDate fromDate, LocalDate toDate,String guestStatus) {

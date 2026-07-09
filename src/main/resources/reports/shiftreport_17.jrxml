@@ -273,9 +273,7 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<expression><![CDATA[$P{hotelName} == null ? "" : $P{hotelName}]]></expression>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000002" x="0" y="22" width="802" height="14" fontName="DejaVu Sans" fontSize="11.0" blankWhenNull="true">
-			<expression><![CDATA[java.util.stream.Stream.of($P{hotelAddress}, $P{hotelCity}, $P{hotelState}, $P{hotelZipcode}, $P{hotelCountry})
-                .filter(s -> s != null && !s.trim().isEmpty())
-                .collect(java.util.stream.Collectors.joining(", "))]]></expression>
+			<expression><![CDATA[$P{hotelAddress} != null ? $P{hotelAddress} : ""]]></expression>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0003-4003-9003-000000000004" x="0" y="36" width="802" height="18" fontName="DejaVu Sans" fontSize="11.0" vTextAlign="Middle">
 			<expression><![CDATA["Phone: " + ($P{hotelPhone} == null ? "" : $P{hotelPhone})]]></expression>

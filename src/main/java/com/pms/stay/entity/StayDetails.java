@@ -64,15 +64,15 @@ public class StayDetails extends BaseEntity implements Serializable{
     @Column(name="room_master_id")
     private Long roomMasterId;
     
-    @Column(name="comment",nullable = false)
+    @Column(name="comment",nullable = true)
     private String comment;
     
     @NotNull(message = "RATE type is required")
 	@Enumerated(EnumType.STRING) // Store enum name as text in DB
-    @Column(nullable = false)
+    @Column(nullable = true)
     private RateTypeEnum rateTypeEnum;
     
-    @NotNull(message = "STAY status is required") 	
+//    @NotNull(message = "STAY status is required") 	
    	@Enumerated(EnumType.STRING)
    	@Column(name = "stay_status_enum")
    	private StayStatusEnum stayStatusEnum = StayStatusEnum.UnConfirmed;

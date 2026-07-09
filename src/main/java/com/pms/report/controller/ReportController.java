@@ -4,7 +4,6 @@
 package com.pms.report.controller;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pms.building.controller.BuildingController;
 import com.pms.report.service.ReportService;
 
 @RestController
@@ -76,12 +74,11 @@ public class ReportController {
 
 	@GetMapping("/roomstatus-report")
 	public ResponseEntity<byte[]> getRoomStatusReport(@RequestParam Long hotelId,
-			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
-			@RequestParam LocalDate toDate, @RequestParam(defaultValue = "") Long buildingId,
+			@RequestParam(defaultValue = "pdf") String format, @RequestParam(defaultValue = "") Long buildingId,
 			@RequestParam(defaultValue = "") Long floorId) {
 
 		try {
-			byte[] report = reportService.generateRoomStatusReport(hotelId, format, fromDate, toDate, buildingId,
+			byte[] report = reportService.generateRoomStatusReport(hotelId, format, buildingId,
 					floorId);
 
 			// Set response headers based on format
@@ -109,7 +106,7 @@ public class ReportController {
 	@GetMapping("/dailycollection-report")
 	public ResponseEntity<byte[]> getDailyCollectionReport(@RequestParam Long hotelId,
 			@RequestParam(defaultValue = "pdf") String format, @RequestParam LocalDate fromDate,
-			@RequestParam LocalDate toDate) {
+			@RequestParam(required = false) LocalDate toDate) {
 
 		try {
 			byte[] report = reportService.generateDailyCollectionReport(hotelId, format, fromDate, toDate);
@@ -134,6 +131,38 @@ public class ReportController {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
+	
+	/*
+	@GetMapping("/dailycollection-report")
+	public ResponseEntity<byte[]> getDailyCollectionReport(@RequestParam Long hotelId,
+	        @RequestParam(defaultValue = "pdf") String format,
+	        @RequestParam LocalDate reportDate) {
+
+	    try {
+	        byte[] report = reportService.generateDailyCollectionReport(hotelId, format, reportDate);
+
+	        // Set response headers based on format
+	        HttpHeaders headers = new HttpHeaders();
+
+	        if ("xlsx".equalsIgnoreCase(format)) {
+	            headers.setContentType(
+	                    MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+	            headers.setContentDispositionFormData("attachment", "daily_collection_report.xlsx");
+	        } else {
+	            headers.setContentType(MediaType.APPLICATION_PDF);
+	            headers.setContentDispositionFormData("attachment", "daily_collection_report.pdf");
+	        }
+
+	        return ResponseEntity.ok().headers(headers).body(report);
+
+	    } catch (Exception e) {
+	        logger.info("Exception in e::" + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.internalServerError().build();
+	    }
+	}
+	*/
+	
 
 	@GetMapping("/guest-list-report")
 	public ResponseEntity<byte[]> getGuestListReport(@RequestParam Long hotelId,

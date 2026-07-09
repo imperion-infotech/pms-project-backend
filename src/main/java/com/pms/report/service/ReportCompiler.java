@@ -41,16 +41,16 @@ public class ReportCompiler {
         
      // Room Status Report
         ClassPathResource roomStatusResource =
-                new ClassPathResource("reports/room_status_report_v13_2.jasper");
+                new ClassPathResource("reports/room_status_report_v14_1.jasper");
         
         ClassPathResource dailyCollectionResource =
-                new ClassPathResource("reports/daily_collection_v20_5.jasper");
+                new ClassPathResource("reports/daily_collection_v20_5_3.jasper");
         
         ClassPathResource guestListResource =
                 new ClassPathResource("reports/guest_list_report_v14_7.jasper");
         
         ClassPathResource houseKeepingResource =
-                new ClassPathResource("reports/house_keeping_report_v12_9.jasper");
+                new ClassPathResource("reports/house_keeping_report_v12_13_fixed.jasper");
         
         ClassPathResource shiftReportResource =
                 new ClassPathResource("reports/shiftreport_17.jasper");
