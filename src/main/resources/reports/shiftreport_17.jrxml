@@ -188,13 +188,19 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 					<expression><![CDATA[" Subtotal"]]></expression>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="471" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{userGroupCash}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000007" x="577" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{userGroupOther}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000008" x="682" y="4" width="120" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{userGroupBank}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 			</band>
 		</groupFooter>
@@ -250,17 +256,23 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 		</groupHeader>
 		<groupFooter>
 			<band height="22">
-				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000002" x="360" y="0" width="112" height="20" fontSize="11.0" bold="true" hTextAlign="Right">
+				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000002" x="360" y="2" width="112" height="20" fontSize="11.0" bold="true" hTextAlign="Right">
 					<expression><![CDATA["Total"]]></expression>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000003" x="472" y="0" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{shiftGroupCash}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000004" x="577" y="0" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{shiftGroupOther}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0002-4002-8002-000000000005" x="682" y="0" width="120" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+					<paragraph rightIndent="5"/>
 					<expression><![CDATA[$V{shiftGroupBank}]]></expression>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</element>
 			</band>
 		</groupFooter>
@@ -305,13 +317,19 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 				<expression><![CDATA[$F{payment_date} == null ? "N/A" : new java.text.SimpleDateFormat("M/d/yy hh:mm a").format($F{payment_date})]]></expression>
 			</element>
 			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000006" x="472" y="0" width="105" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<paragraph rightIndent="5"/>
 				<expression><![CDATA[$F{cash_amt}]]></expression>
+				<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 			</element>
 			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000007" x="577" y="0" width="105" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<paragraph rightIndent="5"/>
 				<expression><![CDATA[$F{other_amt}]]></expression>
+				<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 			</element>
 			<element kind="textField" uuid="1a2b3c4d-0005-4005-8005-000000000008" x="682" y="0" width="120" height="18" fontSize="11.0" pattern="#,##0.00" hTextAlign="Right" vTextAlign="Middle">
+				<paragraph rightIndent="5"/>
 				<expression><![CDATA[$F{bank_amt}]]></expression>
+				<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 			</element>
 			<element kind="line" uuid="1a2b3c4d-0005-4005-8005-000000000009" x="0" y="20" width="802" height="1">
 				<pen lineColor="#A69F9F"/>
@@ -347,26 +365,34 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<text><![CDATA[  Cash]]></text>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000003" x="690" y="10" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<paragraph rightIndent="5"/>
 			<expression><![CDATA[$V{grandCash}]]></expression>
+			<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 		</element>
 		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000007" x="550" y="34" width="140" height="20" fontSize="11.0" bold="true">
 			<text><![CDATA[  Other]]></text>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000004" x="690" y="34" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<paragraph rightIndent="5"/>
 			<expression><![CDATA[$V{grandOther}]]></expression>
+			<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 		</element>
 		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000008" x="550" y="58" width="140" height="20" fontSize="11.0" bold="true">
 			<text><![CDATA[  Bank]]></text>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000005" x="690" y="58" width="112" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<paragraph rightIndent="5"/>
 			<expression><![CDATA[$V{grandBank}]]></expression>
+			<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 		</element>
 		<element kind="line" uuid="1a2b3c4d-0007-4007-8007-000000000009" x="550" y="84" width="252" height="1"/>
 		<element kind="staticText" uuid="1a2b3c4d-0007-4007-8007-000000000010" x="550" y="90" width="140" height="20" fontSize="12.0" bold="true">
 			<text><![CDATA[Grand Total]]></text>
 		</element>
 		<element kind="textField" uuid="1a2b3c4d-0007-4007-8007-000000000011" x="690" y="90" width="112" height="20" fontSize="12.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
+			<paragraph rightIndent="5"/>
 			<expression><![CDATA[$V{grandCash}.add($V{grandOther}).add($V{grandBank})]]></expression>
+			<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 		</element>
 		<element kind="line" uuid="b15d4be0-7d5a-4a88-942a-b0f61c2377ad" x="550" y="7" width="1" height="78"/>
 		<element kind="line" uuid="5abeb5a9-ecdc-4d7a-bdcf-cf7ce9107f0f" x="690" y="7" width="1" height="78"/>
