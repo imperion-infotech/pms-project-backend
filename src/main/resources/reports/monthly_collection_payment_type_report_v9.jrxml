@@ -107,7 +107,7 @@ ORDER BY series.pay_day
 		</element>
 		<element kind="line" uuid="b433880e-f5d9-4a87-8061-c64b6686bbe0" x="0" y="50" width="535" height="1" forecolor="#000000"/>
 		<element kind="textField" uuid="ace43d79-aa4e-4d1e-9e8f-75bc99098b40" x="0" y="53" width="535" height="14" fontName="DejaVu Sans" fontSize="10.0" bold="true">
-			<expression><![CDATA["Collection Report (Payment Type) for: " + $P{fromDate} +"  TO " + $P{toDate}]]></expression>
+			<expression><![CDATA["Monthly Collection Report (Payment Type) for: " + $P{fromDate} +"  TO " + $P{toDate}]]></expression>
 		</element>
 		<element kind="line" uuid="0123618a-f89a-4be6-9a25-2419e57534d7" x="0" y="68" width="535" height="1" forecolor="#000000"/>
 	</title>
