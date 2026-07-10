@@ -48,7 +48,11 @@ public interface HotelRepository extends SoftDeleteRepository<Hotel, Long> ,  Jp
 		        join m.user u
 		        join u.roles r
 		        where h.id = :hotelId
-		          and r.name = 'ROLE_HOTEL_OWNER'
+		        and h.isDeleted=false 
+	 			and h.isActive=true
+	 			and u.isDeleted=false 
+	 			and u.enabled=true
+		        and r.name = 'ROLE_HOTEL_OWNER'
 		        """)
 		    Optional<PropertyByIdDto> findPropertyById(@Param("hotelId") Long hotelId);
 	

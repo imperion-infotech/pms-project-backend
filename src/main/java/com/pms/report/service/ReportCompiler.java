@@ -56,7 +56,7 @@ public class ReportCompiler {
                 new ClassPathResource("reports/shiftreport_17.jasper");
         
         ClassPathResource monthlyCollectionPaymentTypeReportResource =
-                new ClassPathResource("reports/monthly_collection_payment_type_report_v2.jasper");
+                new ClassPathResource("reports/monthly_collection_payment_type_report_v8.jasper");
 
         compiledRoomStatusReport =
                 (JasperReport) JRLoader.loadObject(

@@ -185,7 +185,7 @@ ORDER BY user_name, shift_block_date, shift_block_no, guest_name, payment_date]]
 			<band height="28">
 				<element kind="line" uuid="1a2b3c4d-0001-4001-8001-000000000004" x="0" y="0" width="802" height="1"/>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000005" x="424" y="4" width="144" height="20" fontSize="11.0" bold="true">
-					<expression><![CDATA[" Subtotal"]]></expression>
+					<expression><![CDATA[" Sub Total"]]></expression>
 				</element>
 				<element kind="textField" uuid="1a2b3c4d-0001-4001-8001-000000000006" x="471" y="4" width="105" height="20" fontSize="11.0" pattern="#,##0.00" bold="true" hTextAlign="Right">
 					<paragraph rightIndent="5"/>
