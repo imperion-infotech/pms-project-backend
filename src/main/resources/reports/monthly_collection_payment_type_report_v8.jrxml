@@ -52,18 +52,18 @@ FROM (
         INTERVAL '1 day'
     )::date AS pay_day
 ) series
-LEFT JOIN multi_motels_pms_db.payment_details pd
+LEFT JOIN payment_details pd
     ON pd.payment_date::date = series.pay_day
    AND pd.hotel_id = $P{hotelId}
    AND pd.is_deleted = false
    AND pd.is_active  = true
    AND EXISTS (
         SELECT 1
-        FROM multi_motels_pms_db.guest_details gd
+        FROM guest_details gd
         WHERE gd.guest_details_id = pd.guest_details_id
           AND gd.is_deleted = false
    )
-LEFT JOIN multi_motels_pms_db.payment_type pt
+LEFT JOIN payment_type pt
     ON pd.payment_type_id = pt.id
 GROUP BY series.pay_day
 ORDER BY series.pay_day
